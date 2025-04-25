@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>History Quiz</title>
+        <description>Explore past events, civilizations, and important figures</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="history">History</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>Which empire was founded by Genghis Khan?</text>
+        <options>
+            <option>Roman Empire</option>
+            <option>Ottoman Empire</option>
+            <option>Mongol Empire</option>
+            <option>Byzantine Empire</option>
+        </options>
+        <answer>Mongol Empire</answer>
+        <difficulty>medium</difficulty>
+        <category>history</category>
+        <feedback>Genghis Khan founded the Mongol Empire in 1206, which became the largest contiguous land empire in history.</feedback>
+    </question>
+    
+    <question>
+        <text>In which year did World War II end?</text>
+        <options>
+            <option>1943</option>
+            <option>1945</option>
+            <option>1947</option>
+            <option>1950</option>
+        </options>
+        <answer>1945</answer>
+        <difficulty>easy</difficulty>
+        <category>history</category>
+        <feedback>World War II ended in 1945 with the surrender of Nazi Germany in May and Japan in September.</feedback>
+    </question>
+    
+    <question>
+        <text>Who was the first woman to win a Nobel Prize?</text>
+        <options>
+            <option>Marie Curie</option>
+            <option>Rosa Parks</option>
+            <option>Florence Nightingale</option>
+            <option>Mother Teresa</option>
+        </options>
+        <answer>Marie Curie</answer>
+        <difficulty>medium</difficulty>
+        <category>history</category>
+        <feedback>Marie Curie won the Nobel Prize in Physics in 1903 and later became the only person to win Nobel Prizes in multiple scientific fields when she won the Chemistry Nobel in 1911.</feedback>
+    </question>
+    
+    <question>
+        <text>Which ancient civilization built the Machu Picchu complex in Peru?</text>
+        <options>
+            <option>The Aztecs</option>
+            <option>The Mayans</option>
+            <option>The Incas</option>
+            <option>The Olmecs</option>
+        </options>
+        <answer>The Incas</answer>
+        <difficulty>medium</difficulty>
+        <category>history</category>
+        <feedback>Machu Picchu was built by the Incas in the 15th century and is now one of the most famous archaeological sites in the world.</feedback>
+    </question>
+    
+    <question>
+        <text>Which document, signed in 1215, is considered one of the most important documents in the development of constitutional law?</text>
+        <options>
+            <option>The Declaration of Independence</option>
+            <option>Magna Carta</option>
+            <option>The Treaty of Versailles</option>
+            <option>The Bill of Rights</option>
+        </options>
+        <answer>Magna Carta</answer>
+        <difficulty>hard</difficulty>
+        <category>history</category>
+        <feedback>The Magna Carta (Great Charter) was signed by King John of England in 1215 and established the principle that everyone, including the king, was subject to the law.</feedback>
+    </question>
+</quiz>

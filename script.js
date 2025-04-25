@@ -11,12 +11,14 @@ document.addEventListener("DOMContentLoaded", () => {
     incorrectAnswers: document.getElementById("incorrect-answers"),
     completionTime: document.getElementById("completion-time"),
     restartButton: document.getElementById("restart-button"),
+    changeCategoryButton: document.getElementById("change-category-button"),
     quizContent: document.getElementById("quiz-content"),
     questionNumber: document.getElementById("question-number"),
     totalQuestions: document.getElementById("total-questions"),
     progressBar: document.getElementById("progress-bar"),
     timerValue: document.getElementById("timer-value"),
     timerElement: document.getElementById("timer"),
+    categorySelection: document.getElementById("category-selection"),
   };
 
   // Quiz State
@@ -31,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     secondsElapsed: 0,
     categories: {},
     quizMetadata: {},
+    selectedCategory: null,
   };
 
   /**
@@ -82,6 +85,34 @@ document.addEventListener("DOMContentLoaded", () => {
    * API calls to backend
    */
   const api = {
+    async fetchAvailableCategories() {
+      try {
+        const response = await fetch(
+          "quiz.php?action=get_available_categories"
+        );
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching available categories:", error);
+        throw new Error("Failed to load available categories");
+      }
+    },
+
+    async setCategory(category) {
+      try {
+        const response = await fetch("quiz.php?action=set_category", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ category: category }),
+        });
+        return await response.json();
+      } catch (error) {
+        console.error("Error setting category:", error);
+        throw new Error("Failed to set category");
+      }
+    },
+
     async fetchQuizInfo() {
       try {
         const response = await fetch("quiz.php?action=get_quiz_info");
@@ -139,6 +170,64 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   /**
+   * Category Selection UI
+   */
+  const categorySelectionUI = {
+    async initialize() {
+      try {
+        const categoriesData = await api.fetchAvailableCategories();
+        this.renderCategories(categoriesData.categories);
+      } catch (error) {
+        console.error("Error initializing categories:", error);
+        this.showError(
+          "Failed to load quiz categories. Please try refreshing the page."
+        );
+      }
+    },
+
+    renderCategories(categories) {
+      const categoryCards = document.querySelectorAll(".category-card");
+
+      // Add click listeners to category cards
+      categoryCards.forEach((card) => {
+        const categoryId = card.getAttribute("data-category");
+
+        card.addEventListener("click", async () => {
+          try {
+            // Visually select the category
+            categoryCards.forEach((c) => c.classList.remove("selected"));
+            card.classList.add("selected");
+
+            // Set the category on the server
+            const result = await api.setCategory(categoryId);
+            state.selectedCategory = categoryId;
+
+            // Start the quiz with the selected category
+            setTimeout(() => {
+              elements.categorySelection.style.display = "none";
+              elements.quizContent.style.display = "block";
+              quizUI.initialize();
+            }, 500);
+          } catch (error) {
+            this.showError("Failed to select category. Please try again.");
+          }
+        });
+      });
+    },
+
+    show() {
+      elements.categorySelection.style.display = "block";
+      elements.quizContent.style.display = "none";
+      elements.resultContainer.style.display = "none";
+    },
+
+    showError(message) {
+      // Display error message for category selection
+      alert(message);
+    },
+  };
+
+  /**
    * Quiz UI management
    */
   const quizUI = {
@@ -148,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const quizInfo = await api.fetchQuizInfo();
         state.categories = quizInfo.categories || {};
         state.quizMetadata = quizInfo.metadata || {};
+        state.selectedCategory = quizInfo.selected_category || null;
 
         // Update page title if metadata is available
         if (state.quizMetadata.title) {
@@ -189,6 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
     displayQuestion(data) {
       elements.quizContent.style.display = "block";
       elements.resultContainer.style.display = "none";
+      elements.categorySelection.style.display = "none";
       elements.questionText.textContent = data.question;
       elements.optionsContainer.innerHTML = "";
       elements.feedbackContainer.innerHTML = "";
@@ -196,6 +287,12 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.nextButton.disabled = true;
       elements.questionNumber.textContent = `Question ${data.question_number}`;
       state.selectedOptionButton = null;
+
+      // Remove any existing metadata
+      const existingMeta = document.querySelector(".question-meta");
+      if (existingMeta) {
+        existingMeta.remove();
+      }
 
       // Add difficulty and category indicators if available
       if (data.difficulty || data.category) {
@@ -337,9 +434,13 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.quizContent.style.display = "none";
       elements.resultContainer.style.display = "block";
       elements.finalScore.textContent = `${finalScore}/${totalQuestions}`;
-      elements.correctAnswers.textContent =
+
+      // Use basic calculation for correct answers if not available from the API
+      const correctAnswersCount =
         totalQuestions - (totalQuestions - finalScore);
-      elements.incorrectAnswers.textContent = totalQuestions - finalScore;
+      elements.correctAnswers.textContent = correctAnswersCount;
+      elements.incorrectAnswers.textContent =
+        totalQuestions - correctAnswersCount;
       elements.completionTime.textContent = timer.getFormattedTime();
 
       try {
@@ -351,6 +452,13 @@ document.addEventListener("DOMContentLoaded", () => {
           stats.category_performance &&
           Object.keys(stats.category_performance).length > 0
         ) {
+          // Remove any existing category results
+          const existingCategoryResults =
+            document.querySelector(".category-results");
+          if (existingCategoryResults) {
+            existingCategoryResults.remove();
+          }
+
           const categoryResults = document.createElement("div");
           categoryResults.className = "category-results";
           categoryResults.innerHTML = "<h3>Performance by Category</h3>";
@@ -374,10 +482,9 @@ document.addEventListener("DOMContentLoaded", () => {
           );
 
           categoryResults.appendChild(catList);
-          elements.resultContainer.insertBefore(
-            categoryResults,
-            elements.restartButton
-          );
+          // Insert before the restart button's parent (result-actions)
+          const resultActions = document.querySelector(".result-actions");
+          elements.resultContainer.insertBefore(categoryResults, resultActions);
         }
       } catch (error) {
         console.error("Could not load detailed statistics", error);
@@ -422,6 +529,14 @@ document.addEventListener("DOMContentLoaded", () => {
         this.showError("Error restarting quiz. Please try again.");
       }
     },
+
+    changeCategory() {
+      // Stop any running timer
+      timer.stop();
+
+      // Show category selection screen
+      categorySelectionUI.show();
+    },
   };
 
   // Initial setup
@@ -429,7 +544,10 @@ document.addEventListener("DOMContentLoaded", () => {
     quizUI.handleAnswerSubmission()
   );
   elements.restartButton.addEventListener("click", () => quizUI.restartQuiz());
+  elements.changeCategoryButton.addEventListener("click", () =>
+    quizUI.changeCategory()
+  );
 
-  // Initialize and load the first question
-  quizUI.initialize();
+  // Initialize the category selection UI
+  categorySelectionUI.initialize();
 });

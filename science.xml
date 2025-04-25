@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>Science Quiz</title>
+        <description>Questions about physics, chemistry, biology, and astronomy</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="science">Science</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>Which planet is known as the Red Planet?</text>
+        <options>
+            <option>Earth</option>
+            <option>Mars</option>
+            <option>Jupiter</option>
+            <option>Venus</option>
+        </options>
+        <answer>Mars</answer>
+        <difficulty>easy</difficulty>
+        <category>science</category>
+        <feedback>Mars is called the Red Planet because of the reddish iron oxide on its surface.</feedback>
+    </question>
+    
+    <question>
+        <text>Which of these elements has the chemical symbol 'Au'?</text>
+        <options>
+            <option>Silver</option>
+            <option>Gold</option>
+            <option>Aluminum</option>
+            <option>Argon</option>
+        </options>
+        <answer>Gold</answer>
+        <difficulty>medium</difficulty>
+        <category>science</category>
+        <feedback>Gold has the chemical symbol 'Au', derived from the Latin word 'aurum'.</feedback>
+    </question>
+    
+    <question>
+        <text>Which famous scientist developed the theory of relativity?</text>
+        <options>
+            <option>Isaac Newton</option>
+            <option>Albert Einstein</option>
+            <option>Marie Curie</option>
+            <option>Nikola Tesla</option>
+        </options>
+        <answer>Albert Einstein</answer>
+        <difficulty>medium</difficulty>
+        <category>science</category>
+        <feedback>Albert Einstein published his theory of relativity in 1915, revolutionizing our understanding of space, time, and gravity.</feedback>
+    </question>
+    
+    <question>
+        <text>What is the smallest unit of matter?</text>
+        <options>
+            <option>Atom</option>
+            <option>Molecule</option>
+            <option>Proton</option>
+            <option>Quark</option>
+        </options>
+        <answer>Quark</answer>
+        <difficulty>hard</difficulty>
+        <category>science</category>
+        <feedback>Quarks are elementary particles and fundamental constituents of matter, making them the smallest known particles.</feedback>
+    </question>
+    
+    <question>
+        <text>What process do plants use to convert sunlight into food?</text>
+        <options>
+            <option>Photosynthesis</option>
+            <option>Respiration</option>
+            <option>Fermentation</option>
+            <option>Transpiration</option>
+        </options>
+        <answer>Photosynthesis</answer>
+        <difficulty>easy</difficulty>
+        <category>science</category>
+        <feedback>Photosynthesis is the process by which plants use sunlight, water, and carbon dioxide to create oxygen and energy in the form of sugar.</feedback>
+    </question>
+</quiz>

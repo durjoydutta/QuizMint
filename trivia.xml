@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>Trivia Quiz</title>
+        <description>General knowledge questions across various topics</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="trivia">Trivia</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>What is the national animal of Scotland?</text>
+        <options>
+            <option>Lion</option>
+            <option>Unicorn</option>
+            <option>Dragon</option>
+            <option>Eagle</option>
+        </options>
+        <answer>Unicorn</answer>
+        <difficulty>medium</difficulty>
+        <category>trivia</category>
+        <feedback>The unicorn has been a Scottish heraldic symbol since the 12th century, representing purity, innocence, and power.</feedback>
+    </question>
+    
+    <question>
+        <text>Which is the only food that never spoils?</text>
+        <options>
+            <option>Canned tuna</option>
+            <option>Dried beans</option>
+            <option>Honey</option>
+            <option>Dark chocolate</option>
+        </options>
+        <answer>Honey</answer>
+        <difficulty>medium</difficulty>
+        <category>trivia</category>
+        <feedback>Honey's low moisture content and acidic pH create an inhospitable environment for bacteria, allowing it to last indefinitely when properly sealed.</feedback>
+    </question>
+    
+    <question>
+        <text>How many keys are on a standard piano?</text>
+        <options>
+            <option>76</option>
+            <option>82</option>
+            <option>88</option>
+            <option>92</option>
+        </options>
+        <answer>88</answer>
+        <difficulty>easy</difficulty>
+        <category>trivia</category>
+        <feedback>A standard modern piano has 88 keys: 52 white keys and 36 black keys, covering seven octaves plus a minor third.</feedback>
+    </question>
+    
+    <question>
+        <text>What is the only planet in our solar system that rotates clockwise?</text>
+        <options>
+            <option>Venus</option>
+            <option>Uranus</option>
+            <option>Neptune</option>
+            <option>Mercury</option>
+        </options>
+        <answer>Venus</answer>
+        <difficulty>hard</difficulty>
+        <category>trivia</category>
+        <feedback>Venus rotates on its axis in the opposite direction to most planets, which is often attributed to a collision with another body during its formation.</feedback>
+    </question>
+    
+    <question>
+        <text>What color is a giraffe's tongue?</text>
+        <options>
+            <option>Pink</option>
+            <option>Blue-black</option>
+            <option>Yellow</option>
+            <option>Orange</option>
+        </options>
+        <answer>Blue-black</answer>
+        <difficulty>medium</difficulty>
+        <category>trivia</category>
+        <feedback>A giraffe's tongue is blue-black, which is believed to protect it from sunburn as they spend many hours using their tongues to gather food in the sun.</feedback>
+    </question>
+</quiz>

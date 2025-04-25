@@ -19,7 +19,53 @@
         </p>
       </div>
 
-      <div id="quiz-content">
+      <!-- Category Selection Screen -->
+      <div id="category-selection">
+        <h2 class="category-selection-title">Choose a Category</h2>
+        <p class="category-selection-subtitle">
+          Select a quiz category to begin
+        </p>
+
+        <div class="categories-grid">
+          <div class="category-card" data-category="geography">
+            <div class="category-icon">🌍</div>
+            <h3>Geography</h3>
+            <p>Test your knowledge about countries, capitals, and landmarks</p>
+          </div>
+
+          <div class="category-card" data-category="science">
+            <div class="category-icon">🔬</div>
+            <h3>Science</h3>
+            <p>Questions about physics, chemistry, biology, and astronomy</p>
+          </div>
+
+          <div class="category-card" data-category="history">
+            <div class="category-icon">📜</div>
+            <h3>History</h3>
+            <p>Explore past events, civilizations, and important figures</p>
+          </div>
+
+          <div class="category-card" data-category="trivia">
+            <div class="category-icon">🎮</div>
+            <h3>Trivia</h3>
+            <p>General knowledge questions across various topics</p>
+          </div>
+
+          <div class="category-card" data-category="technology">
+            <div class="category-icon">💻</div>
+            <h3>Technology</h3>
+            <p>Questions about gadgets, innovations, and tech companies</p>
+          </div>
+
+          <div class="category-card" data-category="programming">
+            <div class="category-icon">👨‍💻</div>
+            <h3>Programming</h3>
+            <p>Web development, coding languages, and frameworks</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="quiz-content" style="display: none">
         <div class="quiz-actions">
           <div class="quiz-info">
             <span id="question-number">Question 1</span> of
@@ -74,7 +120,12 @@
           </div>
         </div>
 
-        <button id="restart-button" class="btn">Take Quiz Again</button>
+        <div class="result-actions">
+          <button id="restart-button" class="btn">Take Quiz Again</button>
+          <button id="change-category-button" class="btn btn-secondary">
+            Change Category
+          </button>
+        </div>
       </div>
     </div>
 

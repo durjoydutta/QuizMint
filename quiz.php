@@ -16,25 +16,42 @@ class QuizHandler
     private $totalQuestions = 0;
     private $quizMetadata = [];
     private $categories = [];
+    private $availableCategories = [
+        'geography',
+        'science',
+        'history',
+        'trivia',
+        'technology',
+        'programming'
+    ];
 
     /**
      * Initialize the quiz handler by loading questions from XML
      */
     public function __construct()
     {
-        $this->loadDataFromXML();
         $this->initializeSession();
+
+        // Load category-specific XML file if a category is selected
+        if (isset($_SESSION['selected_category']) && in_array($_SESSION['selected_category'], $this->availableCategories)) {
+            $this->loadDataFromXML($_SESSION['selected_category'] . '.xml');
+        } else {
+            // If no category is selected or invalid category, load the main XML file
+            $this->loadDataFromXML('quiz_data.xml');
+        }
     }
 
     /**
-     * Load all data from the XML file
+     * Load all data from the specified XML file
+     * 
+     * @param string $xmlFile The XML file to load
      */
-    private function loadDataFromXML()
+    private function loadDataFromXML($xmlFile)
     {
         try {
-            $xml = simplexml_load_file('quiz_data.xml');
+            $xml = simplexml_load_file($xmlFile);
             if ($xml === false) {
-                throw new Exception("Error: Cannot load quiz data XML");
+                throw new Exception("Error: Cannot load quiz data XML from $xmlFile");
             }
 
             // Load metadata
@@ -84,7 +101,7 @@ class QuizHandler
      */
     private function initializeSession()
     {
-        if (!isset($_SESSION['current_question_index'])) {
+        if (!isset($_SESSION['current_question_index']) || !isset($_SESSION['selected_category'])) {
             $this->restartQuiz();
         }
     }
@@ -122,9 +139,84 @@ class QuizHandler
                 $this->getCategories();
                 break;
 
+            case 'set_category':
+                $this->setCategory();
+                break;
+
+            case 'get_available_categories':
+                $this->getAvailableCategories();
+                break;
+
             default:
                 $this->respondWithError('Invalid action');
         }
+    }
+
+    /**
+     * Get all available categories for selection
+     */
+    private function getAvailableCategories()
+    {
+        $categoryDetails = [];
+
+        foreach ($this->availableCategories as $categoryId) {
+            try {
+                // Try to load metadata from each category file
+                $xml = simplexml_load_file($categoryId . '.xml');
+                if ($xml !== false && isset($xml->metadata)) {
+                    $categoryDetails[] = [
+                        'id' => $categoryId,
+                        'title' => (string)$xml->metadata->title,
+                        'description' => (string)$xml->metadata->description
+                    ];
+                }
+            } catch (Exception $e) {
+                // Skip if file doesn't exist or has invalid format
+                continue;
+            }
+        }
+
+        $this->respondWithSuccess([
+            'categories' => $categoryDetails
+        ]);
+    }
+
+    /**
+     * Set the selected category
+     */
+    private function setCategory()
+    {
+        $requestBody = file_get_contents('php://input');
+        $data = json_decode($requestBody, true);
+
+        if (!$data || !isset($data['category'])) {
+            $this->respondWithError('Invalid request format');
+            return;
+        }
+
+        $category = $data['category'];
+
+        if (!in_array($category, $this->availableCategories)) {
+            $this->respondWithError('Invalid category');
+            return;
+        }
+
+        // Set the selected category and restart the quiz
+        $_SESSION['selected_category'] = $category;
+        $this->restartQuiz();
+
+        // Reload the XML file for the selected category
+        $this->questions = [];
+        $this->totalQuestions = 0;
+        $this->quizMetadata = [];
+        $this->categories = [];
+        $this->loadDataFromXML($category . '.xml');
+
+        $this->respondWithSuccess([
+            'status' => 'Category set successfully',
+            'category' => $category,
+            'metadata' => $this->quizMetadata
+        ]);
     }
 
     /**
@@ -148,13 +240,15 @@ class QuizHandler
                 'total_questions' => $this->totalQuestions,
                 'quiz_complete' => false,
                 'difficulty' => $currentQuestion['difficulty'],
-                'category' => $categoryName
+                'category' => $categoryName,
+                'selected_category' => $_SESSION['selected_category']
             ]);
         } else {
             $this->respondWithSuccess([
                 'quiz_complete' => true,
                 'score' => $_SESSION['score'],
-                'total_questions' => $this->totalQuestions
+                'total_questions' => $this->totalQuestions,
+                'selected_category' => $_SESSION['selected_category']
             ]);
         }
     }
@@ -251,6 +345,11 @@ class QuizHandler
         $_SESSION['start_time'] = time();
         $_SESSION['answers'] = [];
         $_SESSION['points_earned'] = [];
+
+        // Initialize selected category if not set
+        if (!isset($_SESSION['selected_category'])) {
+            $_SESSION['selected_category'] = 'geography'; // Default to geography
+        }
     }
 
     /**
@@ -305,7 +404,8 @@ class QuizHandler
             'score' => $_SESSION['score'],
             'completion_time' => $completionTime,
             'answer_details' => $_SESSION['answers'] ?? [],
-            'category_performance' => $categoryStats
+            'category_performance' => $categoryStats,
+            'selected_category' => $_SESSION['selected_category']
         ]);
     }
 
@@ -317,7 +417,8 @@ class QuizHandler
         $this->respondWithSuccess([
             'metadata' => $this->quizMetadata,
             'total_questions' => $this->totalQuestions,
-            'categories' => $this->categories
+            'categories' => $this->categories,
+            'selected_category' => $_SESSION['selected_category']
         ]);
     }
 

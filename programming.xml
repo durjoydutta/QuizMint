@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>Programming Quiz</title>
+        <description>Web development, coding languages, and frameworks</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="programming">Programming</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>Which of the following is NOT a JavaScript framework?</text>
+        <options>
+            <option>Angular</option>
+            <option>Django</option>
+            <option>Vue</option>
+            <option>React</option>
+        </options>
+        <answer>Django</answer>
+        <difficulty>medium</difficulty>
+        <category>programming</category>
+        <feedback>Django is a Python web framework, while Angular, Vue, and React are JavaScript frameworks/libraries.</feedback>
+    </question>
+    
+    <question>
+        <text>What does CSS stand for?</text>
+        <options>
+            <option>Computer Style Sheets</option>
+            <option>Creative Style Sheets</option>
+            <option>Cascading Style Sheets</option>
+            <option>Colorful Style Sheets</option>
+        </options>
+        <answer>Cascading Style Sheets</answer>
+        <difficulty>easy</difficulty>
+        <category>programming</category>
+        <feedback>CSS (Cascading Style Sheets) is used to control the presentation and layout of HTML elements on web pages.</feedback>
+    </question>
+    
+    <question>
+        <text>Which HTML tag is used to create a hyperlink?</text>
+        <options>
+            <option>&lt;link&gt;</option>
+            <option>&lt;a&gt;</option>
+            <option>&lt;href&gt;</option>
+            <option>&lt;url&gt;</option>
+        </options>
+        <answer>&lt;a&gt;</answer>
+        <difficulty>easy</difficulty>
+        <category>programming</category>
+        <feedback>The &lt;a&gt; (anchor) tag is used to create hyperlinks. The 'href' attribute specifies the destination URL.</feedback>
+    </question>
+    
+    <question>
+        <text>Which of these is a valid way to comment in JavaScript?</text>
+        <options>
+            <option>/* This is a comment */</option>
+            <option># This is a comment</option>
+            <option>&lt;!-- This is a comment --&gt;</option>
+            <option>''' This is a comment '''</option>
+        </options>
+        <answer>/* This is a comment */</answer>
+        <difficulty>medium</difficulty>
+        <category>programming</category>
+        <feedback>JavaScript supports both single-line comments with '//' and multi-line comments with '/* ... */'.</feedback>
+    </question>
+    
+    <question>
+        <text>Which database is a NoSQL database?</text>
+        <options>
+            <option>MySQL</option>
+            <option>PostgreSQL</option>
+            <option>MongoDB</option>
+            <option>SQLite</option>
+        </options>
+        <answer>MongoDB</answer>
+        <difficulty>medium</difficulty>
+        <category>programming</category>
+        <feedback>MongoDB is a NoSQL database that stores data in flexible, JSON-like documents, while the others are relational SQL databases.</feedback>
+    </question>
+</quiz>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>Technology Quiz</title>
+        <description>Questions about gadgets, innovations, and tech companies</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="technology">Technology</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>Who is considered the co-founder of Apple Inc. along with Steve Jobs?</text>
+        <options>
+            <option>Bill Gates</option>
+            <option>Steve Wozniak</option>
+            <option>Mark Zuckerberg</option>
+            <option>Elon Musk</option>
+        </options>
+        <answer>Steve Wozniak</answer>
+        <difficulty>easy</difficulty>
+        <category>technology</category>
+        <feedback>Steve Wozniak, often referred to as "Woz," co-founded Apple Computer Inc. (now Apple Inc.) with Steve Jobs in 1976.</feedback>
+    </question>
+    
+    <question>
+        <text>What does the acronym "SSD" stand for in computer storage?</text>
+        <options>
+            <option>Solid State Drive</option>
+            <option>System Storage Device</option>
+            <option>Sequential Storage Disk</option>
+            <option>Secure Storage Data</option>
+        </options>
+        <answer>Solid State Drive</answer>
+        <difficulty>easy</difficulty>
+        <category>technology</category>
+        <feedback>An SSD (Solid State Drive) is a type of storage device that uses flash memory to store data, offering faster access than traditional hard disk drives.</feedback>
+    </question>
+    
+    <question>
+        <text>Which tech company introduced the first commercially successful mouse-driven graphical user interface?</text>
+        <options>
+            <option>Microsoft</option>
+            <option>IBM</option>
+            <option>Apple</option>
+            <option>Xerox</option>
+        </options>
+        <answer>Apple</answer>
+        <difficulty>medium</difficulty>
+        <category>technology</category>
+        <feedback>While Xerox invented the GUI and mouse, Apple's 1984 Macintosh was the first commercially successful computer to feature a mouse-driven GUI.</feedback>
+    </question>
+    
+    <question>
+        <text>What year was the first iPhone released?</text>
+        <options>
+            <option>2005</option>
+            <option>2007</option>
+            <option>2009</option>
+            <option>2011</option>
+        </options>
+        <answer>2007</answer>
+        <difficulty>medium</difficulty>
+        <category>technology</category>
+        <feedback>The first iPhone was unveiled by Steve Jobs on January 9, 2007, and released in the United States on June 29, 2007.</feedback>
+    </question>
+    
+    <question>
+        <text>Which protocol is used to securely transfer data between a web browser and a website?</text>
+        <options>
+            <option>FTP</option>
+            <option>HTTP</option>
+            <option>HTTPS</option>
+            <option>SMTP</option>
+        </options>
+        <answer>HTTPS</answer>
+        <difficulty>medium</difficulty>
+        <category>technology</category>
+        <feedback>HTTPS (Hypertext Transfer Protocol Secure) encrypts data exchanged between a browser and a website, providing security for sensitive information.</feedback>
+    </question>
+</quiz>

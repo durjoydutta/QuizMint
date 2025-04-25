@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>Geography Quiz</title>
+        <description>Test your knowledge about countries, capitals, and landmarks</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="geography">Geography</category>
+    </categories>
+    
+    <!-- Questions -->
+    <question>
+        <text>What is the capital of France?</text>
+        <options>
+            <option>Berlin</option>
+            <option>Madrid</option>
+            <option>Paris</option>
+            <option>Rome</option>
+        </options>
+        <answer>Paris</answer>
+        <difficulty>easy</difficulty>
+        <category>geography</category>
+        <feedback>Paris is the capital and most populous city of France.</feedback>
+    </question>
+    
+    <question>
+        <text>What is the largest ocean on Earth?</text>
+        <options>
+            <option>Atlantic Ocean</option>
+            <option>Indian Ocean</option>
+            <option>Arctic Ocean</option>
+            <option>Pacific Ocean</option>
+        </options>
+        <answer>Pacific Ocean</answer>
+        <difficulty>medium</difficulty>
+        <category>geography</category>
+        <feedback>The Pacific Ocean is the largest and deepest ocean on Earth, covering more than 30% of the planet's surface.</feedback>
+    </question>
+    
+    <question>
+        <text>Which country is known as the Land of the Rising Sun?</text>
+        <options>
+            <option>China</option>
+            <option>Japan</option>
+            <option>Thailand</option>
+            <option>South Korea</option>
+        </options>
+        <answer>Japan</answer>
+        <difficulty>easy</difficulty>
+        <category>geography</category>
+        <feedback>Japan is known as the Land of the Rising Sun because from China, it appears that the sun rises from the direction of Japan.</feedback>
+    </question>
+    
+    <question>
+        <text>Which is the longest river in the world?</text>
+        <options>
+            <option>Amazon River</option>
+            <option>Nile River</option>
+            <option>Yangtze River</option>
+            <option>Mississippi River</option>
+        </options>
+        <answer>Nile River</answer>
+        <difficulty>medium</difficulty>
+        <category>geography</category>
+        <feedback>The Nile River is generally considered the longest river in the world at about 6,650 kilometers (4,130 miles).</feedback>
+    </question>
+    
+    <question>
+        <text>Which mountain range separates Europe from Asia?</text>
+        <options>
+            <option>Alps</option>
+            <option>Himalayas</option>
+            <option>Ural Mountains</option>
+            <option>Andes Mountains</option>
+        </options>
+        <answer>Ural Mountains</answer>
+        <difficulty>hard</difficulty>
+        <category>geography</category>
+        <feedback>The Ural Mountains are considered the geographical boundary between Europe and Asia.</feedback>
+    </question>
+</quiz>
