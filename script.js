@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     questionText: document.getElementById("question-text"),
     optionsContainer: document.getElementById("options-container"),
     feedbackContainer: document.getElementById("feedback-container"),
+    submitButton: document.getElementById("submit-button"),
     nextButton: document.getElementById("next-button"),
     resultContainer: document.getElementById("result-container"),
     finalScore: document.getElementById("final-score"),
@@ -34,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     categories: {},
     quizMetadata: {},
     selectedCategory: null,
+    currentQuestionAnswered: false, // Track if current question is answered
   };
 
   /**
@@ -253,6 +255,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async loadQuestion() {
       try {
+        // Reset the question answered state
+        state.currentQuestionAnswered = false;
+
         const data = await api.fetchQuestion();
 
         if (data.quiz_complete) {
@@ -270,6 +275,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
           // Update progress
           this.updateProgress(data.question_number, data.total_questions);
+
+          // Reset buttons
+          elements.submitButton.style.display = "block";
+          elements.submitButton.disabled = true;
+          elements.nextButton.style.display = "none";
         }
       } catch (error) {
         this.showError("Error loading quiz. Please try again.");
@@ -284,7 +294,6 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.optionsContainer.innerHTML = "";
       elements.feedbackContainer.innerHTML = "";
       elements.feedbackContainer.className = "feedback";
-      elements.nextButton.disabled = true;
       elements.questionNumber.textContent = `Question ${data.question_number}`;
       state.selectedOptionButton = null;
 
@@ -346,6 +355,9 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     selectOption(button, option) {
+      // Only allow selection if question hasn't been answered yet
+      if (state.currentQuestionAnswered) return;
+
       // Deselect previous button if one was selected
       if (state.selectedOptionButton) {
         state.selectedOptionButton.classList.remove("selected");
@@ -354,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Select the new button
       state.selectedOptionButton = button;
       state.selectedOptionButton.classList.add("selected");
-      elements.nextButton.disabled = false;
+      elements.submitButton.disabled = false;
     },
 
     updateProgress(current, total) {
@@ -363,14 +375,17 @@ document.addEventListener("DOMContentLoaded", () => {
     },
 
     async handleAnswerSubmission() {
-      if (!state.selectedOptionButton) return;
+      if (!state.selectedOptionButton || state.currentQuestionAnswered) return;
 
       const selectedAnswer =
         state.selectedOptionButton.querySelector(".option-text").textContent;
-      elements.nextButton.disabled = true;
+      elements.submitButton.disabled = true;
 
       try {
         const result = await api.submitAnswer(selectedAnswer);
+
+        // Mark question as answered
+        state.currentQuestionAnswered = true;
 
         // Disable all option buttons after submitting
         const optionButtons =
@@ -409,22 +424,21 @@ document.addEventListener("DOMContentLoaded", () => {
         state.score = result.score;
         state.answeredQuestions++;
 
-        // Decide whether to show next question or results
+        // Decide whether to show next question button or results
         if (result.quiz_complete) {
           // Delay showing results slightly to allow user to see feedback
           setTimeout(
             () => this.showResults(result.score, result.total_questions),
-            1500
+            2000
           );
         } else {
-          // Re-enable next button to proceed
-          elements.nextButton.textContent = "Next Question";
-          elements.nextButton.disabled = false;
-          elements.nextButton.onclick = () => this.loadQuestion();
+          // Show next button after submission
+          elements.submitButton.style.display = "none";
+          elements.nextButton.style.display = "block";
         }
       } catch (error) {
         this.showError("Error submitting answer. Please try again.");
-        elements.nextButton.disabled = false;
+        elements.submitButton.disabled = false;
       }
     },
 
@@ -508,10 +522,9 @@ document.addEventListener("DOMContentLoaded", () => {
         state.answeredQuestions = 0;
         state.currentQuestionData = null;
         state.selectedOptionButton = null;
+        state.currentQuestionAnswered = false;
 
         // Reset UI elements
-        elements.nextButton.textContent = "Next Question";
-        elements.nextButton.onclick = () => quizUI.handleAnswerSubmission();
         elements.resultContainer.classList.remove("fadeIn");
 
         // Remove any category results if they exist
@@ -540,9 +553,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initial setup
-  elements.nextButton.addEventListener("click", () =>
+  elements.submitButton.addEventListener("click", () =>
     quizUI.handleAnswerSubmission()
   );
+  elements.nextButton.addEventListener("click", () => quizUI.loadQuestion());
   elements.restartButton.addEventListener("click", () => quizUI.restartQuiz());
   elements.changeCategoryButton.addEventListener("click", () =>
     quizUI.changeCategory()
