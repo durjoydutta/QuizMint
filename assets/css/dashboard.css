@@ -309,63 +309,137 @@
   border-radius: 4px;
 }
 
-.performance-charts {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.chart-container {
+/* Leaderboard styles */
+.leaderboard-content {
   background-color: var(--card-color);
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  margin-bottom: 25px;
-  height: 300px;
-  position: relative;
+  overflow: hidden;
 }
 
-.chart {
-  width: 100%;
-  height: 100%;
+.leaderboard-header {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 15px 20px;
+  background-color: rgba(67, 97, 238, 0.05);
+  font-weight: 600;
+  color: var(--text-color);
 }
 
-.performance-details {
+.leaderboard-items {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.leaderboard-item {
+  display: grid;
+  grid-template-columns: 80px 1fr 1fr;
+  padding: 15px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  transition: var(--transition);
+  align-items: center;
+}
+
+.leaderboard-item:hover {
+  background-color: rgba(67, 97, 238, 0.02);
+}
+
+.leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.rank {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: white;
+  font-weight: bold;
+}
+
+.rank.top-3 {
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.username {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username .user-avatar-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.score {
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Difficulty stats styles */
+.difficulty-overview {
   background-color: var(--card-color);
   padding: 25px;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+
+.difficulty-overview h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.3em;
+  color: var(--text-color);
 }
 
 .difficulty-stats {
   display: flex;
+  justify-content: space-between;
   gap: 15px;
 }
 
 .difficulty-item {
   flex: 1;
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
-  padding: 15px;
-  border-radius: 8px;
+  transition: var(--transition);
+  border: 1px solid #e0e0e0;
 }
 
 .difficulty-item.easy {
-  background-color: rgba(76, 175, 80, 0.1);
+  background-color: rgba(76, 175, 80, 0.05);
 }
 
 .difficulty-item.medium {
-  background-color: rgba(255, 152, 0, 0.1);
+  background-color: rgba(255, 152, 0, 0.05);
 }
 
 .difficulty-item.hard {
-  background-color: rgba(244, 67, 54, 0.1);
+  background-color: rgba(244, 67, 54, 0.05);
 }
 
 .difficulty-value {
-  font-size: 1.8em;
+  font-size: 2em;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .difficulty-item.easy .difficulty-value {
@@ -382,6 +456,21 @@
 
 .difficulty-label {
   font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.difficulty-details {
+  font-size: 0.9em;
+  color: var(--text-light);
+}
+
+/* Remove chart container styles */
+.performance-charts,
+.chart-container,
+.chart,
+.performance-details {
+  display: none;
 }
 
 .quiz-history {

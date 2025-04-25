@@ -44,6 +44,10 @@ class AuthHandler
                 $this->updateUser();
                 break;
 
+            case 'get_leaderboard':
+                $this->getLeaderboard();
+                break;
+
             default:
                 $this->respondWithError('Invalid action');
         }
@@ -445,6 +449,48 @@ class AuthHandler
             ]);
         } catch (Exception $e) {
             $this->respondWithError('Error retrieving stats: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get leaderboard data
+     */
+    private function getLeaderboard()
+    {
+        try {
+            // Get top 10 users by average score with minimum of 1 quizzes
+            $query = "
+                SELECT 
+                    u.username,
+                    ROUND(AVG(qr.score / qr.total_questions * 100)) as avg_score,
+                    COUNT(qr.id) as quizzes 
+                FROM 
+                    users u 
+                JOIN 
+                    quiz_results qr ON u.id = qr.user_id 
+                GROUP BY 
+                    u.id, u.username 
+                HAVING 
+                    COUNT(qr.id) >= 1 
+                ORDER BY 
+                    avg_score DESC, quizzes DESC 
+                LIMIT 10
+            ";
+
+            $result = $this->conn->query($query);
+
+            if (!$result) {
+                throw new Exception("Database error: " . $this->conn->error);
+            }
+
+            $leaderboard = [];
+            while ($row = $result->fetch_assoc()) {
+                $leaderboard[] = $row;
+            }
+
+            $this->respondWithSuccess(['leaderboard' => $leaderboard]);
+        } catch (Exception $e) {
+            $this->respondWithError($e->getMessage());
         }
     }
 

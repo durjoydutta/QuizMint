@@ -51,8 +51,8 @@ requireAuth();
                         <li class="active" data-target="overview">
                             <span class="icon">📊</span> Overview
                         </li>
-                        <li data-target="performance">
-                            <span class="icon">📈</span> Performance
+                        <li data-target="leaderboard">
+                            <span class="icon">🏆</span> Leaderboard
                         </li>
                         <li data-target="history">
                             <span class="icon">📜</span> Quiz History
@@ -105,32 +105,27 @@ requireAuth();
                             <p class="no-data">No category data available</p>
                         </div>
                     </div>
-                </section>
 
-                <!-- Performance Section -->
-                <section id="performance" class="dashboard-section">
-                    <h2>Detailed Performance</h2>
-
-                    <div class="performance-charts">
-                        <div class="chart-container">
-                            <h3>Category Performance</h3>
-                            <div id="category-chart" class="chart">
-                                <!-- Chart will be rendered here -->
-                            </div>
-                        </div>
-
-                        <div class="chart-container">
-                            <h3>Difficulty Distribution</h3>
-                            <div id="difficulty-chart" class="chart">
-                                <!-- Chart will be rendered here -->
-                            </div>
+                    <div class="difficulty-overview">
+                        <h3>Performance by Difficulty</h3>
+                        <div id="difficulty-stats" class="difficulty-stats">
+                            <p class="no-data">No difficulty data available</p>
                         </div>
                     </div>
+                </section>
 
-                    <div class="performance-details">
-                        <h3>Performance by Difficulty</h3>
-                        <div class="difficulty-stats" id="difficulty-stats">
-                            <!-- Difficulty stats will be populated here -->
+                <!-- Leaderboard Section -->
+                <section id="leaderboard" class="dashboard-section">
+                    <h2>Leaderboard</h2>
+
+                    <div class="leaderboard-content">
+                        <div class="leaderboard-header">
+                            <span>Rank</span>
+                            <span>Username</span>
+                            <span>Score</span>
+                        </div>
+                        <div id="leaderboard-items" class="leaderboard-items">
+                            <p class="no-data">No leaderboard data available</p>
                         </div>
                     </div>
                 </section>

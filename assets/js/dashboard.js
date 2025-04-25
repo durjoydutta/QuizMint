@@ -148,6 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate category filter select
       populateCategoryFilter(data.category_stats);
+
+      // Load leaderboard data
+      loadLeaderboard();
     } catch (error) {
       console.error("Failed to load dashboard data:", error);
     }
@@ -257,9 +260,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       difficultyStatsContainer.appendChild(diffElement);
     });
-
-    // If we have charts, render them here
-    renderCharts(difficultyStats);
   }
 
   /**
@@ -409,224 +409,64 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /**
-   * Render data visualization charts
+   * Update leaderboard
    */
-  function renderCharts(difficultyStats) {
-    // Category Performance Chart
-    const categoryChartElement = document.getElementById("category-chart");
-    if (
-      categoryChartElement &&
-      window.quizData &&
-      window.quizData.category_stats &&
-      window.quizData.category_stats.length > 0
-    ) {
-      // Get the data from category stats
-      const categoryData = window.quizData.category_stats;
+  async function loadLeaderboard() {
+    const leaderboardItemsContainer =
+      document.getElementById("leaderboard-items");
 
-      // Prepare data for the chart
-      const categories = categoryData.map((cat) => cat.category);
-      const percentages = categoryData.map((cat) =>
-        parseFloat(cat.average_percentage).toFixed(1)
+    if (!leaderboardItemsContainer) return;
+
+    try {
+      // Add timestamp to prevent caching
+      const timestamp = new Date().getTime();
+      const response = await fetch(
+        `/quizmint/api/auth.php?action=get_leaderboard&t=${timestamp}`
       );
+      const data = await response.json();
 
-      // Create a color array with a gradient of blues
-      const backgroundColors = categoryData.map((_, index) => {
-        const shade = 100 - index * 10;
-        return `rgba(67, 97, 238, ${0.7 - index * 0.1})`;
-      });
-
-      // Destroy previous chart if exists
-      if (window.categoryChart) {
-        window.categoryChart.destroy();
+      if (data.error) {
+        leaderboardItemsContainer.innerHTML = `<p class="no-data">${data.error}</p>`;
+        return;
       }
 
-      // Create new chart
-      window.categoryChart = new Chart(categoryChartElement, {
-        type: "bar",
-        data: {
-          labels: categories,
-          datasets: [
-            {
-              label: "Success Rate (%)",
-              data: percentages,
-              backgroundColor: backgroundColors,
-              borderColor: "rgba(67, 97, 238, 1)",
-              borderWidth: 1,
-              borderRadius: 5,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
-              max: 100,
-              ticks: {
-                callback: function (value) {
-                  return value + "%";
-                },
-              },
-              title: {
-                display: true,
-                text: "Success Rate",
-              },
-            },
-            x: {
-              title: {
-                display: true,
-                text: "Category",
-              },
-            },
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const catData = categoryData[context.dataIndex];
-                  const percent = parseFloat(context.raw);
-                  return [
-                    `Success Rate: ${percent}%`,
-                    `Correct: ${catData.correct_answers}/${catData.total_questions}`,
-                    `Quizzes: ${catData.quizzes_taken}`,
-                  ];
-                },
-              },
-            },
-          },
-        },
-      });
-    }
-
-    // Difficulty Distribution Chart
-    const difficultyChartElement = document.getElementById("difficulty-chart");
-    if (
-      difficultyChartElement &&
-      difficultyStats &&
-      difficultyStats.length > 0
-    ) {
-      // Create difficulty level labels
-      const difficulties = ["easy", "medium", "hard"];
-
-      // Prepare data for chart
-      const difficultyLabels = difficulties.map(
-        (d) => d.charAt(0).toUpperCase() + d.slice(1)
-      );
-
-      // Calculate total questions answered for each difficulty
-      const totalQuestions = [];
-      const correctAnswers = [];
-      const incorrectAnswers = [];
-
-      difficulties.forEach((diff) => {
-        const diffData = difficultyStats.find(
-          (d) => d.difficulty.toLowerCase() === diff
-        );
-        if (diffData) {
-          const total = parseInt(diffData.total_questions) || 0;
-          const correct = parseInt(diffData.correct_answers) || 0;
-          totalQuestions.push(total);
-          correctAnswers.push(correct);
-          incorrectAnswers.push(total - correct);
-        } else {
-          totalQuestions.push(0);
-          correctAnswers.push(0);
-          incorrectAnswers.push(0);
-        }
-      });
-
-      // Set colors based on difficulty
-      const difficultyColors = {
-        correct: [
-          "rgba(76, 175, 80, 0.8)", // Easy - Green
-          "rgba(255, 152, 0, 0.8)", // Medium - Orange
-          "rgba(244, 67, 54, 0.8)", // Hard - Red
-        ],
-        incorrect: [
-          "rgba(76, 175, 80, 0.3)",
-          "rgba(255, 152, 0, 0.3)",
-          "rgba(244, 67, 54, 0.3)",
-        ],
-      };
-
-      // Destroy previous chart if exists
-      if (window.difficultyChart) {
-        window.difficultyChart.destroy();
+      if (!data.leaderboard || data.leaderboard.length === 0) {
+        leaderboardItemsContainer.innerHTML =
+          '<p class="no-data">No leaderboard data available yet</p>';
+        return;
       }
 
-      // Create a stacked bar chart
-      window.difficultyChart = new Chart(difficultyChartElement, {
-        type: "bar",
-        data: {
-          labels: difficultyLabels,
-          datasets: [
-            {
-              label: "Correct Answers",
-              data: correctAnswers,
-              backgroundColor: difficultyColors.correct,
-              borderWidth: 0,
-              borderRadius: {
-                topLeft: 5,
-                topRight: 5,
-                bottomLeft: 0,
-                bottomRight: 0,
-              },
-            },
-            {
-              label: "Incorrect Answers",
-              data: incorrectAnswers,
-              backgroundColor: difficultyColors.incorrect,
-              borderWidth: 0,
-              borderRadius: {
-                topLeft: 0,
-                topRight: 0,
-                bottomLeft: 5,
-                bottomRight: 5,
-              },
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              stacked: true,
-              title: {
-                display: true,
-                text: "Number of Questions",
-              },
-            },
-            x: {
-              stacked: true,
-              title: {
-                display: true,
-                text: "Difficulty Level",
-              },
-            },
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                footer: (tooltipItems) => {
-                  // Find the corresponding difficulty data
-                  const index = tooltipItems[0].dataIndex;
-                  const diff = difficulties[index];
-                  const diffData = difficultyStats.find(
-                    (d) => d.difficulty.toLowerCase() === diff
-                  );
-                  if (diffData) {
-                    const percent = parseFloat(diffData.percentage).toFixed(1);
-                    return `Overall Success: ${percent}%`;
-                  }
-                  return "";
-                },
-              },
-            },
-          },
-        },
+      leaderboardItemsContainer.innerHTML = "";
+
+      // Display top 10 users
+      data.leaderboard.forEach((user, index) => {
+        const userInitial = user.username.charAt(0).toUpperCase();
+        const isTop3 = index < 3;
+
+        const leaderboardItem = document.createElement("div");
+        leaderboardItem.className = "leaderboard-item";
+        leaderboardItem.innerHTML = `
+          <div>
+            <div class="rank ${isTop3 ? "top-3" : ""}">${index + 1}</div>
+          </div>
+          <div class="username">
+            <div class="user-avatar-small">${userInitial}</div>
+            ${user.username}
+          </div>
+          <div class="score">
+            ${user.avg_score}%
+            <span style="font-size: 0.8em; font-weight: normal; color: var(--text-light);">(${
+              user.quizzes
+            } quizzes)</span>
+          </div>
+        `;
+
+        leaderboardItemsContainer.appendChild(leaderboardItem);
       });
+    } catch (error) {
+      console.error("Failed to load leaderboard data:", error);
+      leaderboardItemsContainer.innerHTML =
+        '<p class="no-data">Failed to load leaderboard</p>';
     }
   }
 
