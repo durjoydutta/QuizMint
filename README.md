@@ -143,7 +143,7 @@ Add questions to existing categories by editing the corresponding XML file:
 
 ## 👥 Contact
 
-For questions or feedback, please [open an issue](https://github.com/durjoydutta/quizmint/issues) or contact us at example@quizmint.com.
+For questions or feedback, please [open an issue](https://github.com/durjoydutta/quizmint/issues) or contact us at contact.durjoy@gmail.com
 
 ---
 
