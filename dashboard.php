@@ -20,6 +20,8 @@ requireAuth();
     <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <!-- Add Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -197,6 +199,7 @@ requireAuth();
     </div>
 
     <script src="assets/js/dashboard.js"></script>
+    <script src="assets/js/avatar-menu.js"></script>
 </body>
 
 </html>

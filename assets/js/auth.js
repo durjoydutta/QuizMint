@@ -62,11 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
         showMessage(data.error, "error");
         loginButton.disabled = false;
       } else {
-        showMessage("Login successful! Redirecting to dashboard...", "success");
+        showMessage("Login successful! Redirecting to quiz...", "success");
 
-        // Redirect to dashboard after a short delay
+        // Redirect to index page (quiz) after a short delay instead of dashboard
         setTimeout(() => {
-          window.location.href = "dashboard.php";
+          window.location.href = "index.php";
         }, 1000);
       }
     } catch (error) {
@@ -128,13 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
         signupButton.disabled = false;
       } else {
         showMessage(
-          "Account created successfully! Redirecting to dashboard...",
+          "Account created successfully! Redirecting to quiz...",
           "success"
         );
 
-        // Redirect to dashboard after a short delay
+        // Redirect to quiz page after a short delay
         setTimeout(() => {
-          window.location.href = "dashboard.php";
+          window.location.href = "index.php";
         }, 1500);
       }
     } catch (error) {

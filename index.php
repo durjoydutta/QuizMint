@@ -21,122 +21,11 @@ $userInitial = strtoupper(substr($username, 0, 1));
         type="image/svg+xml"
         href="/quizmint/assets/img/logo.svg" />
     <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/modern-ui.css" />
     <!-- Add Inter font from Google Fonts -->
     <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <style>
-        /* Modern UI enhancements */
-        body {
-            background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f0 100%);
-        }
-
-        .quiz-container {
-            position: relative;
-            margin: 30px auto;
-            border-radius: 16px;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-        }
-
-        .user-avatar-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 10;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-avatar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .user-menu {
-            position: absolute;
-            top: 55px;
-            right: 0;
-            background: white;
-            border-radius: 8px;
-            width: 200px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-        }
-
-        .user-menu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .user-menu-header {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .user-menu-name {
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .user-menu-email {
-            font-size: 0.8em;
-            color: var(--text-light);
-        }
-
-        .user-menu-items {
-            padding: 10px 0;
-        }
-
-        .user-menu-item {
-            padding: 10px 15px;
-            cursor: pointer;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .user-menu-item:hover {
-            background: rgba(67, 97, 238, 0.05);
-        }
-
-        .user-menu-item span {
-            margin-left: 10px;
-        }
-
-        .option-button {
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-        }
-
-        .option-button:hover {
-            transform: translateX(5px);
-        }
-
-        .quiz-actions {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px 20px;
-            border-radius: 12px;
-            backdrop-filter: blur(5px);
-            margin-bottom: 25px;
-        }
-    </style>
 </head>
 
 <body>
@@ -282,36 +171,7 @@ $userInitial = strtoupper(substr($username, 0, 1));
     </div>
 
     <script src="assets/js/script.js"></script>
-    <script>
-        // Avatar dropdown functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const userAvatar = document.getElementById('user-avatar');
-            const userMenu = document.getElementById('user-menu');
-            const logoutButton = document.getElementById('logout-button');
-
-            // Toggle menu on avatar click
-            userAvatar.addEventListener('click', function() {
-                userMenu.classList.toggle('active');
-            });
-
-            // Close menu when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!userAvatar.contains(event.target) && !userMenu.contains(event.target)) {
-                    userMenu.classList.remove('active');
-                }
-            });
-
-            // Logout functionality
-            logoutButton.addEventListener('click', async function() {
-                try {
-                    await fetch('/quizmint/api/auth.php?action=logout');
-                    window.location.href = 'login.php';
-                } catch (error) {
-                    console.error('Logout failed:', error);
-                }
-            });
-        });
-    </script>
+    <script src="assets/js/avatar-menu.js"></script>
 </body>
 
 </html>
