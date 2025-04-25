@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QuizMint</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="quiz-container">
+      <h1>QuizMint</h1>
+      <div id="quiz-content">
+        <div id="question-container">
+          <p id="question-text"></p>
+          <div id="options-container">
+            <!-- Options will be loaded here -->
+          </div>
+        </div>
+        <div id="feedback-container" class="feedback"></div>
+        <div id="navigation-container">
+          <button id="next-button">Next Question</button>
+        </div>
+      </div>
+      <div id="result-container" style="display: none">
+        <h2>Quiz Completed!</h2>
+        <p>Your final score is: <span id="final-score"></span></p>
+        <button id="restart-button">Restart Quiz</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
