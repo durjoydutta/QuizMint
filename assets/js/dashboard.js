@@ -37,6 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryFilterSelect = document.getElementById("category-filter");
   const sortFilterSelect = document.getElementById("sort-filter");
 
+  // Initialize window.quizData to store quiz stats
+  window.quizData = {
+    recent_quizzes: [],
+  };
+
   // Check authentication and load dashboard data
   loadUserData();
 
@@ -111,8 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function loadDashboardData() {
     try {
+      // Add timestamp to prevent caching
+      const timestamp = new Date().getTime();
       const response = await fetch(
-        "/quizmint/api/auth.php?action=get_user_stats"
+        `/quizmint/api/auth.php?action=get_user_stats&t=${timestamp}`
       );
       const data = await response.json();
 
@@ -120,6 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error loading stats:", data.error);
         return;
       }
+
+      // Store data in window.quizData for access by filters
+      window.quizData = data;
 
       // Update overview stats
       updateOverviewStats(data);

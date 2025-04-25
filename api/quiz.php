@@ -377,7 +377,8 @@ class QuizHandler
                 VALUES (?, ?, ?, ?, ?)
             ");
 
-            $stmt->bind_param("isiii", $userId, $category, $score, $totalQuestions, $completionTime);
+            // Change from "isiii" to "ssiii" because user_id is VARCHAR in the database
+            $stmt->bind_param("ssiii", $userId, $category, $score, $totalQuestions, $completionTime);
             $stmt->execute();
 
             // Get the quiz result ID
@@ -403,8 +404,9 @@ class QuizHandler
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                         ");
 
+                        // Change first parameter from "i" to "s" for user_id
                         $stmt->bind_param(
-                            "iissssss",
+                            "sissssss",
                             $userId,
                             $quizResultId,
                             $questionText,
@@ -417,6 +419,11 @@ class QuizHandler
                         $stmt->execute();
                     }
                 }
+            }
+
+            // Add error checking and debugging
+            if ($GLOBALS['con']->error) {
+                error_log('MySQL Error: ' . $GLOBALS['con']->error);
             }
         } catch (Exception $e) {
             // Log the error but don't interrupt the response

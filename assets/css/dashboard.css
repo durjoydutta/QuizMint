@@ -20,6 +20,16 @@
   font-size: 1.8em;
 }
 
+.logo a {
+  text-decoration: none;
+  color: var(--primary-color);
+  transition: var(--transition);
+}
+
+.logo a:hover {
+  color: var(--secondary-color);
+}
+
 .user-menu {
   display: flex;
   align-items: center;
@@ -117,6 +127,12 @@
   text-align: center;
 }
 
+.start-quiz a {
+  display: inline-block;
+  width: 100%;
+  text-decoration: none;
+}
+
 .main-content {
   flex-grow: 1;
   padding: 30px;
@@ -136,6 +152,26 @@
   margin-bottom: 25px;
   color: var(--text-color);
   font-weight: 600;
+}
+
+/* Common link styles across dashboard */
+.dashboard-container a:not(.btn) {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.dashboard-container a:not(.btn):hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
+
+/* Style for button links */
+.dashboard-container a.btn {
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 
 .stats-summary {
