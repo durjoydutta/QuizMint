@@ -1,154 +1,435 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const questionTextElement = document.getElementById("question-text");
-  const optionsContainer = document.getElementById("options-container");
-  const feedbackContainer = document.getElementById("feedback-container");
-  const nextButton = document.getElementById("next-button");
-  const resultContainer = document.getElementById("result-container");
-  const finalScoreElement = document.getElementById("final-score");
-  const restartButton = document.getElementById("restart-button");
-  const quizContent = document.getElementById("quiz-content");
+  // DOM Elements
+  const elements = {
+    questionText: document.getElementById("question-text"),
+    optionsContainer: document.getElementById("options-container"),
+    feedbackContainer: document.getElementById("feedback-container"),
+    nextButton: document.getElementById("next-button"),
+    resultContainer: document.getElementById("result-container"),
+    finalScore: document.getElementById("final-score"),
+    correctAnswers: document.getElementById("correct-answers"),
+    incorrectAnswers: document.getElementById("incorrect-answers"),
+    completionTime: document.getElementById("completion-time"),
+    restartButton: document.getElementById("restart-button"),
+    quizContent: document.getElementById("quiz-content"),
+    questionNumber: document.getElementById("question-number"),
+    totalQuestions: document.getElementById("total-questions"),
+    progressBar: document.getElementById("progress-bar"),
+    timerValue: document.getElementById("timer-value"),
+    timerElement: document.getElementById("timer"),
+  };
 
-  let currentQuestionData = null;
-  let selectedOptionButton = null;
-  let score = 0;
-  let totalQuestions = 0;
+  // Quiz State
+  const state = {
+    currentQuestionData: null,
+    selectedOptionButton: null,
+    score: 0,
+    totalQuestions: 0,
+    answeredQuestions: 0,
+    quizStartTime: null,
+    timerInterval: null,
+    secondsElapsed: 0,
+    categories: {},
+    quizMetadata: {},
+  };
 
-  async function fetchQuestion() {
-    try {
-      const response = await fetch("quiz.php?action=get_question");
-      const data = await response.json();
+  /**
+   * Timer functionality
+   */
+  const timer = {
+    start() {
+      state.quizStartTime = new Date();
+      state.secondsElapsed = 0;
 
-      if (data.quiz_complete) {
-        showResults(data.score, data.total_questions);
-      } else {
-        currentQuestionData = data;
-        displayQuestion(data);
+      clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        state.secondsElapsed++;
+        this.update();
+      }, 1000);
+    },
+
+    stop() {
+      clearInterval(state.timerInterval);
+    },
+
+    update() {
+      const minutes = Math.floor(state.secondsElapsed / 60);
+      const seconds = state.secondsElapsed % 60;
+      elements.timerValue.textContent = `${minutes
+        .toString()
+        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+
+      // Change color as time increases
+      if (state.secondsElapsed > 120) {
+        // 2+ minutes
+        elements.timerElement.className = "timer danger";
+      } else if (state.secondsElapsed > 60) {
+        // 1+ minute
+        elements.timerElement.className = "timer warning";
       }
-    } catch (error) {
-      console.error("Error fetching question:", error);
-      feedbackContainer.textContent = "Error loading quiz. Please try again.";
-      feedbackContainer.className = "feedback error";
-    }
-  }
+    },
 
-  function displayQuestion(data) {
-    quizContent.style.display = "block";
-    resultContainer.style.display = "none";
-    questionTextElement.textContent = `Q${data.question_number}: ${data.question}`;
-    optionsContainer.innerHTML = ""; // Clear previous options
-    feedbackContainer.innerHTML = ""; // Clear previous feedback
-    feedbackContainer.className = "feedback"; // Reset feedback style
-    nextButton.disabled = true; // Disable next button until an answer is selected
-    selectedOptionButton = null;
+    getFormattedTime() {
+      const minutes = Math.floor(state.secondsElapsed / 60);
+      const seconds = state.secondsElapsed % 60;
+      return `${minutes.toString().padStart(2, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+    },
+  };
 
-    data.options.forEach((option) => {
-      const button = document.createElement("button");
-      button.textContent = option;
-      button.classList.add("option-button");
-      button.addEventListener("click", () => selectOption(button, option));
-      optionsContainer.appendChild(button);
-    });
-  }
+  /**
+   * API calls to backend
+   */
+  const api = {
+    async fetchQuizInfo() {
+      try {
+        const response = await fetch("quiz.php?action=get_quiz_info");
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching quiz info:", error);
+        throw new Error("Failed to load quiz information");
+      }
+    },
 
-  function selectOption(button, option) {
-    // Deselect previous button if one was selected
-    if (selectedOptionButton) {
-      selectedOptionButton.classList.remove("selected");
-    }
-    // Select the new button
-    selectedOptionButton = button;
-    selectedOptionButton.classList.add("selected");
-    nextButton.disabled = false; // Enable next button
-  }
+    async fetchQuestion() {
+      try {
+        const response = await fetch("quiz.php?action=get_question");
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching question:", error);
+        throw new Error("Failed to load question");
+      }
+    },
 
-  async function submitAnswer() {
-    if (!selectedOptionButton) return; // Only proceed if an option is selected
-
-    const selectedAnswer = selectedOptionButton.textContent;
-    nextButton.disabled = true; // Disable button while processing
-
-    try {
-      const response = await fetch("quiz.php?action=submit_answer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ answer: selectedAnswer }),
-      });
-      const result = await response.json();
-
-      // Disable all option buttons after submitting
-      const optionButtons = optionsContainer.querySelectorAll(".option-button");
-      optionButtons.forEach((btn) => (btn.disabled = true));
-
-      // Provide feedback
-      if (result.correct) {
-        selectedOptionButton.classList.add("correct");
-        feedbackContainer.textContent = "Correct!";
-        feedbackContainer.className = "feedback correct";
-      } else {
-        selectedOptionButton.classList.add("incorrect");
-        feedbackContainer.textContent = `Incorrect. The correct answer was: ${result.correct_answer}`;
-        feedbackContainer.className = "feedback incorrect";
-        // Highlight the correct answer
-        optionButtons.forEach((btn) => {
-          if (btn.textContent === result.correct_answer) {
-            btn.classList.add("correct");
-          }
+    async submitAnswer(selectedAnswer) {
+      try {
+        const response = await fetch("quiz.php?action=submit_answer", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ answer: selectedAnswer }),
         });
+        return await response.json();
+      } catch (error) {
+        console.error("Error submitting answer:", error);
+        throw new Error("Failed to submit answer");
+      }
+    },
+
+    async restartQuiz() {
+      try {
+        await fetch("quiz.php?action=restart");
+      } catch (error) {
+        console.error("Error restarting quiz:", error);
+        throw new Error("Failed to restart quiz");
+      }
+    },
+
+    async getStats() {
+      try {
+        const response = await fetch("quiz.php?action=get_stats");
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+        throw new Error("Failed to load statistics");
+      }
+    },
+  };
+
+  /**
+   * Quiz UI management
+   */
+  const quizUI = {
+    async initialize() {
+      try {
+        // Fetch quiz metadata and categories
+        const quizInfo = await api.fetchQuizInfo();
+        state.categories = quizInfo.categories || {};
+        state.quizMetadata = quizInfo.metadata || {};
+
+        // Update page title if metadata is available
+        if (state.quizMetadata.title) {
+          document.title = `${state.quizMetadata.title} | QuizMint`;
+        }
+
+        // Start the quiz
+        this.loadQuestion();
+      } catch (error) {
+        this.showError("Error initializing quiz. Please try again.");
+      }
+    },
+
+    async loadQuestion() {
+      try {
+        const data = await api.fetchQuestion();
+
+        if (data.quiz_complete) {
+          this.showResults(data.score, data.total_questions);
+        } else {
+          state.currentQuestionData = data;
+          state.totalQuestions = data.total_questions;
+          elements.totalQuestions.textContent = data.total_questions;
+          this.displayQuestion(data);
+
+          // Start timer if this is the first question
+          if (data.question_number === 1) {
+            timer.start();
+          }
+
+          // Update progress
+          this.updateProgress(data.question_number, data.total_questions);
+        }
+      } catch (error) {
+        this.showError("Error loading quiz. Please try again.");
+      }
+    },
+
+    displayQuestion(data) {
+      elements.quizContent.style.display = "block";
+      elements.resultContainer.style.display = "none";
+      elements.questionText.textContent = data.question;
+      elements.optionsContainer.innerHTML = "";
+      elements.feedbackContainer.innerHTML = "";
+      elements.feedbackContainer.className = "feedback";
+      elements.nextButton.disabled = true;
+      elements.questionNumber.textContent = `Question ${data.question_number}`;
+      state.selectedOptionButton = null;
+
+      // Add difficulty and category indicators if available
+      if (data.difficulty || data.category) {
+        const questionMeta = document.createElement("div");
+        questionMeta.className = "question-meta";
+
+        if (data.difficulty) {
+          const difficultyBadge = document.createElement("span");
+          difficultyBadge.className = `difficulty-badge ${data.difficulty}`;
+          difficultyBadge.textContent =
+            data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1);
+          questionMeta.appendChild(difficultyBadge);
+        }
+
+        if (data.category) {
+          const categoryBadge = document.createElement("span");
+          categoryBadge.className = "category-badge";
+          categoryBadge.textContent = data.category;
+          questionMeta.appendChild(categoryBadge);
+        }
+
+        elements.questionText.parentNode.insertBefore(
+          questionMeta,
+          elements.questionText
+        );
       }
 
-      score = result.score; // Update score locally if needed, though PHP session handles it
+      // Create option buttons with enhanced styling
+      data.options.forEach((option) => {
+        const button = document.createElement("button");
+        button.classList.add("option-button");
 
-      // Decide whether to show next question or results
-      if (result.quiz_complete) {
-        totalQuestions = result.total_questions;
-        // Delay showing results slightly to allow user to see feedback
-        setTimeout(() => showResults(score, totalQuestions), 1500);
-      } else {
-        // Re-enable next button to proceed
-        nextButton.textContent = "Next Question";
-        nextButton.disabled = false;
-        // Change button action to fetch next question
-        nextButton.onclick = fetchQuestion; // Reassign click handler
+        // Create marker element (circle)
+        const marker = document.createElement("span");
+        marker.classList.add("option-marker");
+
+        // Create text element
+        const text = document.createElement("span");
+        text.classList.add("option-text");
+        text.textContent = option;
+
+        // Append elements to button
+        button.appendChild(marker);
+        button.appendChild(text);
+
+        button.addEventListener("click", () =>
+          this.selectOption(button, option)
+        );
+        elements.optionsContainer.appendChild(button);
+      });
+    },
+
+    selectOption(button, option) {
+      // Deselect previous button if one was selected
+      if (state.selectedOptionButton) {
+        state.selectedOptionButton.classList.remove("selected");
       }
-    } catch (error) {
-      console.error("Error submitting answer:", error);
-      feedbackContainer.textContent =
-        "Error submitting answer. Please try again.";
-      feedbackContainer.className = "feedback error";
-      nextButton.disabled = false; // Re-enable button on error
-    }
-  }
 
-  function showResults(finalScore, total) {
-    quizContent.style.display = "none";
-    resultContainer.style.display = "block";
-    finalScoreElement.textContent = `${finalScore} / ${total}`;
-  }
+      // Select the new button
+      state.selectedOptionButton = button;
+      state.selectedOptionButton.classList.add("selected");
+      elements.nextButton.disabled = false;
+    },
 
-  async function restartQuiz() {
-    try {
-      await fetch("quiz.php?action=restart");
-      score = 0;
-      totalQuestions = 0;
-      currentQuestionData = null;
-      selectedOptionButton = null;
-      nextButton.textContent = "Next Question"; // Reset button text
-      nextButton.onclick = submitAnswer; // Reset button action
-      fetchQuestion(); // Fetch the first question again
-    } catch (error) {
-      console.error("Error restarting quiz:", error);
-      feedbackContainer.textContent =
-        "Error restarting quiz. Please try again.";
-      feedbackContainer.className = "feedback error";
-    }
-  }
+    updateProgress(current, total) {
+      const percentage = (current / total) * 100;
+      elements.progressBar.style.width = `${percentage}%`;
+    },
+
+    async handleAnswerSubmission() {
+      if (!state.selectedOptionButton) return;
+
+      const selectedAnswer =
+        state.selectedOptionButton.querySelector(".option-text").textContent;
+      elements.nextButton.disabled = true;
+
+      try {
+        const result = await api.submitAnswer(selectedAnswer);
+
+        // Disable all option buttons after submitting
+        const optionButtons =
+          elements.optionsContainer.querySelectorAll(".option-button");
+        optionButtons.forEach((btn) => (btn.disabled = true));
+
+        // Show feedback with animation
+        if (result.correct) {
+          state.selectedOptionButton.classList.add("correct");
+          elements.feedbackContainer.textContent = "Correct!";
+          elements.feedbackContainer.className = "feedback correct visible";
+        } else {
+          state.selectedOptionButton.classList.add("incorrect");
+          elements.feedbackContainer.textContent = `Incorrect. The correct answer was: ${result.correct_answer}`;
+          elements.feedbackContainer.className = "feedback incorrect visible";
+
+          // Highlight the correct answer
+          optionButtons.forEach((btn) => {
+            if (
+              btn.querySelector(".option-text").textContent ===
+              result.correct_answer
+            ) {
+              btn.classList.add("correct");
+            }
+          });
+        }
+
+        // Display additional feedback if available
+        if (result.feedback) {
+          const feedbackDetailElement = document.createElement("p");
+          feedbackDetailElement.className = "feedback-detail";
+          feedbackDetailElement.textContent = result.feedback;
+          elements.feedbackContainer.appendChild(feedbackDetailElement);
+        }
+
+        state.score = result.score;
+        state.answeredQuestions++;
+
+        // Decide whether to show next question or results
+        if (result.quiz_complete) {
+          // Delay showing results slightly to allow user to see feedback
+          setTimeout(
+            () => this.showResults(result.score, result.total_questions),
+            1500
+          );
+        } else {
+          // Re-enable next button to proceed
+          elements.nextButton.textContent = "Next Question";
+          elements.nextButton.disabled = false;
+          elements.nextButton.onclick = () => this.loadQuestion();
+        }
+      } catch (error) {
+        this.showError("Error submitting answer. Please try again.");
+        elements.nextButton.disabled = false;
+      }
+    },
+
+    async showResults(finalScore, totalQuestions) {
+      timer.stop();
+
+      elements.quizContent.style.display = "none";
+      elements.resultContainer.style.display = "block";
+      elements.finalScore.textContent = `${finalScore}/${totalQuestions}`;
+      elements.correctAnswers.textContent =
+        totalQuestions - (totalQuestions - finalScore);
+      elements.incorrectAnswers.textContent = totalQuestions - finalScore;
+      elements.completionTime.textContent = timer.getFormattedTime();
+
+      try {
+        // Get detailed stats if available
+        const stats = await api.getStats();
+
+        // If we have category performance data, display it
+        if (
+          stats.category_performance &&
+          Object.keys(stats.category_performance).length > 0
+        ) {
+          const categoryResults = document.createElement("div");
+          categoryResults.className = "category-results";
+          categoryResults.innerHTML = "<h3>Performance by Category</h3>";
+
+          const catList = document.createElement("ul");
+          catList.className = "category-list";
+
+          Object.entries(stats.category_performance).forEach(
+            ([category, data]) => {
+              const catItem = document.createElement("li");
+              const percent = Math.round((data.correct / data.total) * 100);
+              catItem.innerHTML = `
+              <span class="category-name">${category}:</span> 
+              <span class="category-score">${data.correct}/${data.total} (${percent}%)</span>
+              <div class="category-bar">
+                <div class="category-progress" style="width: ${percent}%"></div>
+              </div>
+            `;
+              catList.appendChild(catItem);
+            }
+          );
+
+          categoryResults.appendChild(catList);
+          elements.resultContainer.insertBefore(
+            categoryResults,
+            elements.restartButton
+          );
+        }
+      } catch (error) {
+        console.error("Could not load detailed statistics", error);
+      }
+
+      // Add some animation when showing results
+      elements.resultContainer.classList.add("fadeIn");
+    },
+
+    showError(message) {
+      elements.feedbackContainer.textContent = message;
+      elements.feedbackContainer.className = "feedback error visible";
+    },
+
+    async restartQuiz() {
+      try {
+        await api.restartQuiz();
+
+        // Reset local state
+        state.score = 0;
+        state.answeredQuestions = 0;
+        state.currentQuestionData = null;
+        state.selectedOptionButton = null;
+
+        // Reset UI elements
+        elements.nextButton.textContent = "Next Question";
+        elements.nextButton.onclick = () => quizUI.handleAnswerSubmission();
+        elements.resultContainer.classList.remove("fadeIn");
+
+        // Remove any category results if they exist
+        const categoryResults = document.querySelector(".category-results");
+        if (categoryResults) {
+          categoryResults.remove();
+        }
+
+        // Start timer again
+        timer.start();
+
+        // Load the first question
+        this.loadQuestion();
+      } catch (error) {
+        this.showError("Error restarting quiz. Please try again.");
+      }
+    },
+  };
 
   // Initial setup
-  nextButton.addEventListener("click", submitAnswer); // Initial action is submit
-  restartButton.addEventListener("click", restartQuiz);
+  elements.nextButton.addEventListener("click", () =>
+    quizUI.handleAnswerSubmission()
+  );
+  elements.restartButton.addEventListener("click", () => quizUI.restartQuiz());
 
-  // Load the first question when the page loads
-  fetchQuestion();
+  // Initialize and load the first question
+  quizUI.initialize();
 });

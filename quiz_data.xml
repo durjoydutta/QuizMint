@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <quiz>
+    <!-- Quiz metadata -->
+    <metadata>
+        <title>General Knowledge Quiz</title>
+        <description>Test your knowledge on various topics</description>
+        <author>QuizMint</author>
+        <created>2025-04-25</created>
+    </metadata>
+    
+    <categories>
+        <category id="geography">Geography</category>
+        <category id="science">Science</category>
+        <category id="general">General Knowledge</category>
+    </categories>
+    
+    <!-- Questions -->
     <question>
         <text>What is the capital of France?</text>
         <options>
@@ -9,7 +24,11 @@
             <option>Rome</option>
         </options>
         <answer>Paris</answer>
+        <difficulty>easy</difficulty>
+        <category>geography</category>
+        <feedback>Paris is the capital and most populous city of France.</feedback>
     </question>
+    
     <question>
         <text>Which planet is known as the Red Planet?</text>
         <options>
@@ -19,7 +38,11 @@
             <option>Venus</option>
         </options>
         <answer>Mars</answer>
+        <difficulty>easy</difficulty>
+        <category>science</category>
+        <feedback>Mars is called the Red Planet because of the reddish iron oxide on its surface.</feedback>
     </question>
+    
     <question>
         <text>What is the largest ocean on Earth?</text>
         <options>
@@ -29,5 +52,36 @@
             <option>Pacific Ocean</option>
         </options>
         <answer>Pacific Ocean</answer>
+        <difficulty>medium</difficulty>
+        <category>geography</category>
+        <feedback>The Pacific Ocean is the largest and deepest ocean on Earth, covering more than 30% of the planet's surface.</feedback>
+    </question>
+    
+    <question>
+        <text>Which of these elements has the chemical symbol 'Au'?</text>
+        <options>
+            <option>Silver</option>
+            <option>Gold</option>
+            <option>Aluminum</option>
+            <option>Argon</option>
+        </options>
+        <answer>Gold</answer>
+        <difficulty>medium</difficulty>
+        <category>science</category>
+        <feedback>Gold has the chemical symbol 'Au', derived from the Latin word 'aurum'.</feedback>
+    </question>
+    
+    <question>
+        <text>Which famous scientist developed the theory of relativity?</text>
+        <options>
+            <option>Isaac Newton</option>
+            <option>Albert Einstein</option>
+            <option>Marie Curie</option>
+            <option>Nikola Tesla</option>
+        </options>
+        <answer>Albert Einstein</answer>
+        <difficulty>medium</difficulty>
+        <category>science</category>
+        <feedback>Albert Einstein published his theory of relativity in 1915, revolutionizing our understanding of space, time, and gravity.</feedback>
     </question>
 </quiz>

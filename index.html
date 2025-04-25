@@ -3,28 +3,78 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuizMint</title>
+    <title>QuizMint | Interactive Quiz Application</title>
     <link rel="stylesheet" href="style.css" />
+    <!-- Add Inter font from Google Fonts -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
   </head>
   <body>
     <div class="quiz-container">
-      <h1>QuizMint</h1>
+      <div class="header">
+        <h1>QuizMint</h1>
+        <p class="quiz-subtitle">
+          Test your knowledge with our interactive quiz
+        </p>
+      </div>
+
       <div id="quiz-content">
+        <div class="quiz-actions">
+          <div class="quiz-info">
+            <span id="question-number">Question 1</span> of
+            <span id="total-questions">0</span>
+          </div>
+          <div class="timer" id="timer">
+            <span class="timer-icon">⏱️</span>
+            <span id="timer-value">00:00</span>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+        </div>
+
         <div id="question-container">
           <p id="question-text"></p>
           <div id="options-container">
             <!-- Options will be loaded here -->
           </div>
         </div>
+
         <div id="feedback-container" class="feedback"></div>
+
         <div id="navigation-container">
-          <button id="next-button">Next Question</button>
+          <button id="next-button" class="btn">Next Question</button>
         </div>
       </div>
+
       <div id="result-container" style="display: none">
-        <h2>Quiz Completed!</h2>
-        <p>Your final score is: <span id="final-score"></span></p>
-        <button id="restart-button">Restart Quiz</button>
+        <h2 class="result-title">Quiz Completed!</h2>
+        <p class="result-details">
+          You've completed the quiz. Here's your result:
+        </p>
+
+        <div class="score-container">
+          <span id="final-score">0/0</span>
+        </div>
+
+        <div class="score-details">
+          <div class="score-item">
+            <div class="score-number" id="correct-answers">0</div>
+            <div class="score-label">Correct</div>
+          </div>
+          <div class="score-item">
+            <div class="score-number" id="incorrect-answers">0</div>
+            <div class="score-label">Incorrect</div>
+          </div>
+          <div class="score-item">
+            <div class="score-number" id="completion-time">00:00</div>
+            <div class="score-label">Time</div>
+          </div>
+        </div>
+
+        <button id="restart-button" class="btn">Take Quiz Again</button>
       </div>
     </div>
 
