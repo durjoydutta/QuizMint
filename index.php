@@ -2,8 +2,12 @@
 // Include auth middleware
 require_once 'middleware/auth_middleware.php';
 
-// Check if user is authenticated
-$isAuthenticated = isAuthenticated();
+// Require authentication for this page
+requireAuth();
+
+// Now we know the user is authenticated, get user data
+$username = htmlspecialchars($_SESSION['username']);
+$userInitial = strtoupper(substr($username, 0, 1));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,32 +26,139 @@ $isAuthenticated = isAuthenticated();
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
     <style>
-        /* Additional styles for authenticated user header */
-        .auth-header-actions {
-            display: flex;
-            justify-content: flex-end;
-            padding: 15px 25px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 8px;
-            margin-bottom: 20px;
+        /* Modern UI enhancements */
+        body {
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f0 100%);
         }
 
-        .user-welcome {
-            margin-right: 15px;
-            font-weight: 500;
+        .quiz-container {
+            position: relative;
+            margin: 30px auto;
+            border-radius: 16px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .user-avatar-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-avatar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .user-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-menu-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-menu-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .user-menu-email {
+            font-size: 0.8em;
+            color: var(--text-light);
+        }
+
+        .user-menu-items {
+            padding: 10px 0;
+        }
+
+        .user-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-menu-item:hover {
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .user-menu-item span {
+            margin-left: 10px;
+        }
+
+        .option-button {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+        }
+
+        .option-button:hover {
+            transform: translateX(5px);
+        }
+
+        .quiz-actions {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 15px 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            margin-bottom: 25px;
         }
     </style>
 </head>
 
 <body>
     <div class="quiz-container">
-        <?php if ($isAuthenticated): ?>
-            <!-- Show authenticated user header -->
-            <div class="auth-header-actions">
-                <span class="user-welcome">Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
-                <a href="dashboard.php" class="btn">My Dashboard</a>
+        <!-- User Avatar and Menu -->
+        <div class="user-avatar-container">
+            <div id="user-avatar" class="user-avatar"><?php echo $userInitial; ?></div>
+            <div id="user-menu" class="user-menu">
+                <div class="user-menu-header">
+                    <div class="user-menu-name"><?php echo $username; ?></div>
+                    <div class="user-menu-email"><?php echo $_SESSION['email']; ?></div>
+                </div>
+                <div class="user-menu-items">
+                    <a href="dashboard.php" class="user-menu-item">
+                        <div>📊</div> <span>Dashboard</span>
+                    </a>
+                    <div class="user-menu-item" id="logout-button">
+                        <div>🚪</div> <span>Logout</span>
+                    </div>
+                </div>
             </div>
-        <?php endif; ?>
+        </div>
 
         <div class="header">
             <h1>QuizMint</h1>
@@ -100,16 +211,6 @@ $isAuthenticated = isAuthenticated();
                     <p>Web development, coding languages, and frameworks</p>
                 </div>
             </div>
-
-            <?php if (!$isAuthenticated): ?>
-                <div class="auth-prompt" style="margin-top: 30px; text-align: center;">
-                    <p style="margin-bottom: 15px;">Create an account to track your progress and see statistics!</p>
-                    <div style="display: flex; justify-content: center; gap: 10px;">
-                        <a href="login.php" class="btn">Login</a>
-                        <a href="signup.php" class="btn btn-secondary">Sign Up</a>
-                    </div>
-                </div>
-            <?php endif; ?>
         </div>
 
         <div id="quiz-content" style="display: none">
@@ -175,16 +276,42 @@ $isAuthenticated = isAuthenticated();
                 <button id="change-category-button" class="btn btn-secondary">
                     Change Category
                 </button>
-                <?php if ($isAuthenticated): ?>
-                    <a href="dashboard.php" class="btn btn-secondary">View Dashboard</a>
-                <?php else: ?>
-                    <a href="signup.php" class="btn btn-secondary">Create Account to Save Results</a>
-                <?php endif; ?>
+                <a href="dashboard.php" class="btn btn-secondary">View Dashboard</a>
             </div>
         </div>
     </div>
 
     <script src="assets/js/script.js"></script>
+    <script>
+        // Avatar dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const userAvatar = document.getElementById('user-avatar');
+            const userMenu = document.getElementById('user-menu');
+            const logoutButton = document.getElementById('logout-button');
+
+            // Toggle menu on avatar click
+            userAvatar.addEventListener('click', function() {
+                userMenu.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!userAvatar.contains(event.target) && !userMenu.contains(event.target)) {
+                    userMenu.classList.remove('active');
+                }
+            });
+
+            // Logout functionality
+            logoutButton.addEventListener('click', async function() {
+                try {
+                    await fetch('/quizmint/api/auth.php?action=logout');
+                    window.location.href = 'login.php';
+                } catch (error) {
+                    console.error('Logout failed:', error);
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -74,7 +74,7 @@ redirectIfAuthenticated();
         </div>
 
         <div class="auth-footer">
-            <a href="index.php">Back to Home</a>
+            <a href="home.php">Back to Home</a>
         </div>
     </div>
 
