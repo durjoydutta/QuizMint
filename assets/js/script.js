@@ -101,13 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async setCategory(category) {
       try {
-        const response = await fetch("/quizmint/api/quiz.php?action=set_category", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ category: category }),
-        });
+        const response = await fetch(
+          "/quizmint/api/quiz.php?action=set_category",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ category: category }),
+          }
+        );
         return await response.json();
       } catch (error) {
         console.error("Error setting category:", error);
@@ -117,7 +120,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async fetchQuizInfo() {
       try {
-        const response = await fetch("/quizmint/api/quiz.php?action=get_quiz_info");
+        const response = await fetch(
+          "/quizmint/api/quiz.php?action=get_quiz_info"
+        );
         return await response.json();
       } catch (error) {
         console.error("Error fetching quiz info:", error);
@@ -127,7 +132,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async fetchQuestion() {
       try {
-        const response = await fetch("/quizmint/api/quiz.php?action=get_question");
+        const response = await fetch(
+          "/quizmint/api/quiz.php?action=get_question"
+        );
         return await response.json();
       } catch (error) {
         console.error("Error fetching question:", error);
@@ -137,13 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async submitAnswer(selectedAnswer) {
       try {
-        const response = await fetch("/quizmint/api/quiz.php?action=submit_answer", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ answer: selectedAnswer }),
-        });
+        const response = await fetch(
+          "/quizmint/api/quiz.php?action=submit_answer",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ answer: selectedAnswer }),
+          }
+        );
         return await response.json();
       } catch (error) {
         console.error("Error submitting answer:", error);

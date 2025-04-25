@@ -2,6 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
+require_once '../db/db.php';
+
 /**
  * QuizMint - Quiz Application Backend
  * 
@@ -114,38 +116,49 @@ class QuizHandler
     {
         $action = $_GET['action'] ?? '';
 
+        // Special actions that don't require category selection
         switch ($action) {
-            case 'get_question':
-                $this->getQuestion();
-                break;
-
-            case 'submit_answer':
-                $this->submitAnswer();
-                break;
-
             case 'restart':
                 $this->restartQuiz();
                 $this->respondWithSuccess(['status' => 'Quiz restarted']);
                 break;
 
-            case 'get_stats':
-                $this->getQuizStats();
-                break;
-
-            case 'get_quiz_info':
-                $this->getQuizInfo();
-                break;
-
-            case 'set_category':
-                $this->setCategory();
-                break;
-
             case 'get_available_categories':
                 $this->getAvailableCategories();
                 break;
+        }
 
-            default:
-                $this->respondWithError('Invalid action');
+        // Actions that require a category
+        if (isset($_SESSION['selected_category']) && in_array($_SESSION['selected_category'], $this->availableCategories)) {
+            switch ($action) {
+                case 'get_question':
+                    $this->getQuestion();
+                    break;
+
+                case 'submit_answer':
+                    $this->submitAnswer();
+                    break;
+
+                case 'get_stats':
+                    $this->getQuizStats();
+                    break;
+
+                case 'get_quiz_info':
+                    $this->getQuizInfo();
+                    break;
+
+                case 'set_category':
+                    $this->setCategory();
+                    break;
+
+                default:
+                    $this->respondWithError('Invalid action');
+            }
+        } else {
+            // Only respond with error for actions that need a category
+            if ($action !== 'get_available_categories' && $action !== 'set_category') {
+                $this->respondWithError('No valid category selected. Please set a category first.');
+            }
         }
     }
 
@@ -340,6 +353,85 @@ class QuizHandler
     }
 
     /**
+     * Save quiz results to the database
+     */
+    private function saveQuizResults()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            // Only save results for logged-in users
+            return;
+        }
+
+        try {
+            $userId = $_SESSION['user_id'];
+            $category = $_SESSION['selected_category'];
+            $score = $_SESSION['score'];
+            $totalQuestions = $this->totalQuestions;
+            $completionTime = isset($_SESSION['completion_time']) ?
+                ($_SESSION['completion_time'] - $_SESSION['start_time']) : 0;
+
+            // Insert into quiz_results
+            $stmt = $GLOBALS['con']->prepare("
+                INSERT INTO quiz_results 
+                (user_id, category, score, total_questions, completion_time) 
+                VALUES (?, ?, ?, ?, ?)
+            ");
+
+            // Change from "isiii" to "ssiii" because user_id is VARCHAR in the database
+            $stmt->bind_param("ssiii", $userId, $category, $score, $totalQuestions, $completionTime);
+            $stmt->execute();
+
+            // Get the quiz result ID
+            $quizResultId = $stmt->insert_id;
+
+            // Save individual question answers
+            if (isset($_SESSION['answers']) && $quizResultId) {
+                foreach ($_SESSION['answers'] as $answer) {
+                    $questionIdx = $answer['question_index'];
+
+                    // Make sure the question index is valid
+                    if (isset($this->questions[$questionIdx])) {
+                        $questionText = $this->questions[$questionIdx]['text'];
+                        $userAnswer = $answer['user_answer'];
+                        $correctAnswer = $answer['correct_answer'];
+                        $isCorrect = $answer['is_correct'] ? 1 : 0;
+                        $difficulty = $answer['difficulty'];
+                        $category = $this->questions[$questionIdx]['category'];
+
+                        $stmt = $GLOBALS['con']->prepare("
+                            INSERT INTO question_answers 
+                            (user_id, quiz_result_id, question_text, user_answer, correct_answer, is_correct, category, difficulty) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        ");
+
+                        // Change first parameter from "i" to "s" for user_id
+                        $stmt->bind_param(
+                            "sissssss",
+                            $userId,
+                            $quizResultId,
+                            $questionText,
+                            $userAnswer,
+                            $correctAnswer,
+                            $isCorrect,
+                            $category,
+                            $difficulty
+                        );
+                        $stmt->execute();
+                    }
+                }
+            }
+
+            // Add error checking and debugging
+            if ($GLOBALS['con']->error) {
+                error_log('MySQL Error: ' . $GLOBALS['con']->error);
+            }
+        } catch (Exception $e) {
+            // Log the error but don't interrupt the response
+            error_log('Error saving quiz results: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Get quiz statistics
      */
     private function getQuizStats()
@@ -348,6 +440,9 @@ class QuizHandler
             $this->respondWithError('Quiz not completed yet');
             return;
         }
+
+        // Save quiz results to database for logged-in users
+        $this->saveQuizResults();
 
         $correctCount = 0;
         $incorrectCount = 0;
@@ -436,10 +531,21 @@ class QuizHandler
      */
     private function getQuizInfo()
     {
+        $userInfo = null;
+
+        // Add user info if logged in
+        if (isset($_SESSION['user_id'])) {
+            $userInfo = [
+                'id' => $_SESSION['user_id'],
+                'username' => $_SESSION['username'] ?? null
+            ];
+        }
+
         $this->respondWithSuccess([
             'metadata' => $this->quizMetadata,
             'categories' => $this->categories,
-            'selected_category' => $_SESSION['selected_category']
+            'selected_category' => $_SESSION['selected_category'],
+            'user' => $userInfo
         ]);
     }
 

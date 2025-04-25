@@ -1,0 +1,136 @@
+.auth-container {
+  background-color: var(--card-color);
+  padding: 35px 40px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.auth-form {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1em;
+  transition: var(--transition);
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.auth-message {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  display: none;
+}
+
+.auth-message.error {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: var(--danger-color);
+  display: block;
+}
+
+.auth-message.success {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: var(--success-color);
+  display: block;
+}
+
+.auth-links {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 0.9em;
+  color: var(--text-light);
+}
+
+.auth-links a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.auth-links a:hover {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+.auth-footer {
+  margin-top: 30px;
+  font-size: 0.9em;
+}
+
+.auth-footer a {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: var(--transition);
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+
+.auth-footer a:hover {
+  color: var(--primary-color);
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Link styling for consistency across the app */
+a.link-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+a.link-button:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+a.link-button.secondary {
+  background-color: #f5f7fb;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+a.link-button.secondary:hover {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    width: 95%;
+    padding: 25px 20px;
+  }
+
+  .form-group input {
+    padding: 10px 12px;
+  }
+}
