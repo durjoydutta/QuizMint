@@ -34,10 +34,11 @@ class QuizHandler
 
         // Load category-specific XML file if a category is selected
         if (isset($_SESSION['selected_category']) && in_array($_SESSION['selected_category'], $this->availableCategories)) {
-            $this->loadDataFromXML($_SESSION['selected_category'] . '.xml');
+            $this->loadDataFromXML("../data/{$_SESSION['selected_category']}.xml");
         } else {
-            // If no category is selected or invalid category, load the main XML file
-            $this->loadDataFromXML('quiz_data.xml');
+            // throw error if no valid category is selected
+            $this->respondWithError('No valid category selected. Please set a category first.');
+            return;
         }
     }
 
@@ -135,10 +136,6 @@ class QuizHandler
                 $this->getQuizInfo();
                 break;
 
-            case 'get_categories':
-                $this->getCategories();
-                break;
-
             case 'set_category':
                 $this->setCategory();
                 break;
@@ -162,7 +159,7 @@ class QuizHandler
         foreach ($this->availableCategories as $categoryId) {
             try {
                 // Try to load metadata from each category file
-                $xml = simplexml_load_file($categoryId . '.xml');
+                $xml = simplexml_load_file('../data/' . $categoryId . '.xml');
                 if ($xml !== false && isset($xml->metadata)) {
                     $categoryDetails[] = [
                         'id' => $categoryId,
@@ -210,7 +207,7 @@ class QuizHandler
         $this->totalQuestions = 0;
         $this->quizMetadata = [];
         $this->categories = [];
-        $this->loadDataFromXML($category . '.xml');
+        $this->loadDataFromXML('../data/' . $category . '.xml');
 
         $this->respondWithSuccess([
             'status' => 'Category set successfully',

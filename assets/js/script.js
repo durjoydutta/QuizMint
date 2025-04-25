@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async fetchAvailableCategories() {
       try {
         const response = await fetch(
-          "quiz.php?action=get_available_categories"
+          "/quizmint/api/quiz.php?action=get_available_categories"
         );
         return await response.json();
       } catch (error) {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async setCategory(category) {
       try {
-        const response = await fetch("quiz.php?action=set_category", {
+        const response = await fetch("/quizmint/api/quiz.php?action=set_category", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async fetchQuizInfo() {
       try {
-        const response = await fetch("quiz.php?action=get_quiz_info");
+        const response = await fetch("/quizmint/api/quiz.php?action=get_quiz_info");
         return await response.json();
       } catch (error) {
         console.error("Error fetching quiz info:", error);
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async fetchQuestion() {
       try {
-        const response = await fetch("quiz.php?action=get_question");
+        const response = await fetch("/quizmint/api/quiz.php?action=get_question");
         return await response.json();
       } catch (error) {
         console.error("Error fetching question:", error);
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async submitAnswer(selectedAnswer) {
       try {
-        const response = await fetch("quiz.php?action=submit_answer", {
+        const response = await fetch("/quizmint/api/quiz.php?action=submit_answer", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async restartQuiz() {
       try {
-        await fetch("quiz.php?action=restart");
+        await fetch("/quizmint/api/quiz.php?action=restart");
       } catch (error) {
         console.error("Error restarting quiz:", error);
         throw new Error("Failed to restart quiz");
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async getStats() {
       try {
-        const response = await fetch("quiz.php?action=get_stats");
+        const response = await fetch("/quizmint/api/quiz.php?action=get_stats");
         return await response.json();
       } catch (error) {
         console.error("Error fetching stats:", error);
