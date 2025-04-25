@@ -297,18 +297,9 @@ class QuizHandler
                 'difficulty' => $difficulty
             ];
 
-            // Update score if correct
+            // Update score if correct - simple 1 point per correct answer
             if ($isCorrect) {
-                // Apply score multiplier based on difficulty
-                $multiplier = 1;
-                if ($difficulty === 'hard') {
-                    $multiplier = 3;
-                } else if ($difficulty === 'medium') {
-                    $multiplier = 2;
-                }
-
-                $_SESSION['score'] += $multiplier;
-                $_SESSION['points_earned'][] = $multiplier;
+                $_SESSION['score']++;
             }
 
             // Move to the next question
@@ -340,11 +331,10 @@ class QuizHandler
     public function restartQuiz()
     {
         $_SESSION['current_question_index'] = 0;
-        $_SESSION['score'] = 0;
+        $_SESSION['score'] = 0; // Simple score - just count of correct answers
         $_SESSION['quiz_complete'] = false;
         $_SESSION['start_time'] = time();
         $_SESSION['answers'] = [];
-        $_SESSION['points_earned'] = [];
 
         // Initialize selected category if not set
         if (!isset($_SESSION['selected_category'])) {
@@ -365,10 +355,30 @@ class QuizHandler
         $correctCount = 0;
         $incorrectCount = 0;
 
+        // Track count of correct answers by difficulty
+        $difficultyStats = [
+            'easy' => ['correct' => 0, 'total' => 0],
+            'medium' => ['correct' => 0, 'total' => 0],
+            'hard' => ['correct' => 0, 'total' => 0]
+        ];
+
+        // Calculate statistics from answers
         if (isset($_SESSION['answers'])) {
             foreach ($_SESSION['answers'] as $answer) {
+                // Get the difficulty level
+                $difficulty = $answer['difficulty'] ?? 'medium'; // Default to medium if not set
+
+                // Make sure the difficulty is one of our expected values
+                if (!isset($difficultyStats[$difficulty])) {
+                    $difficulty = 'medium';
+                }
+
+                // Count by difficulty
+                $difficultyStats[$difficulty]['total']++;
+
                 if ($answer['is_correct']) {
                     $correctCount++;
+                    $difficultyStats[$difficulty]['correct']++;
                 } else {
                     $incorrectCount++;
                 }
@@ -380,31 +390,46 @@ class QuizHandler
 
         // Calculate per-category performance
         $categoryStats = [];
+
         if (isset($_SESSION['answers'])) {
             foreach ($_SESSION['answers'] as $idx => $answer) {
                 $questionIdx = $answer['question_index'];
-                $category = $this->questions[$questionIdx]['category'];
-                $categoryName = $this->categories[$category] ?? $category;
 
-                if (!isset($categoryStats[$categoryName])) {
-                    $categoryStats[$categoryName] = ['correct' => 0, 'total' => 0];
-                }
+                // Ensure the question index is valid
+                if (isset($this->questions[$questionIdx])) {
+                    $category = $this->questions[$questionIdx]['category'];
+                    $categoryName = $this->categories[$category] ?? $category;
 
-                $categoryStats[$categoryName]['total']++;
-                if ($answer['is_correct']) {
-                    $categoryStats[$categoryName]['correct']++;
+                    if (!isset($categoryStats[$categoryName])) {
+                        $categoryStats[$categoryName] = ['correct' => 0, 'total' => 0];
+                    }
+
+                    // Always increment total count for this category
+                    $categoryStats[$categoryName]['total']++;
+
+                    // Increment correct count only if answer was correct
+                    if ($answer['is_correct']) {
+                        $categoryStats[$categoryName]['correct']++;
+                    }
                 }
             }
         }
+
+        // The final score is simply the count of correct answers
+        $finalScore = $correctCount;
+
+        // Make sure the incorrect count is consistent
+        $incorrectCount = $this->totalQuestions - $correctCount;
 
         $this->respondWithSuccess([
             'total_questions' => $this->totalQuestions,
             'correct_answers' => $correctCount,
             'incorrect_answers' => $incorrectCount,
-            'score' => $_SESSION['score'],
+            'score' => $finalScore,
             'completion_time' => $completionTime,
             'answer_details' => $_SESSION['answers'] ?? [],
             'category_performance' => $categoryStats,
+            'difficulty_performance' => $difficultyStats, // New field for difficulty stats
             'selected_category' => $_SESSION['selected_category']
         ]);
     }
@@ -416,29 +441,9 @@ class QuizHandler
     {
         $this->respondWithSuccess([
             'metadata' => $this->quizMetadata,
-            'total_questions' => $this->totalQuestions,
             'categories' => $this->categories,
             'selected_category' => $_SESSION['selected_category']
         ]);
-    }
-
-    /**
-     * Get quiz categories
-     */
-    private function getCategories()
-    {
-        $this->respondWithSuccess([
-            'categories' => $this->categories
-        ]);
-    }
-
-    /**
-     * Send a success response
-     */
-    private function respondWithSuccess($data)
-    {
-        echo json_encode($data);
-        exit;
     }
 
     /**
@@ -449,6 +454,15 @@ class QuizHandler
         $response = array_merge(['error' => $message], $additionalData);
         http_response_code(400);
         echo json_encode($response);
+        exit;
+    }
+
+    /**
+     * Send a success response
+     */
+    private function respondWithSuccess($data)
+    {
+        echo json_encode($data);
         exit;
     }
 }
