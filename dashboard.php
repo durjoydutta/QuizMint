@@ -63,9 +63,9 @@ requireAuth();
                     </ul>
                 </nav>
 
-                <div class="start-quiz">
+                <!-- <div class="start-quiz">
                     <a href="index.php" class="btn">Take a New Quiz</a>
-                </div>
+                </div> -->
             </div>
 
             <div class="main-content">
@@ -191,6 +191,10 @@ requireAuth();
                 </section>
             </div>
         </div>
+    </div>
+
+    <div class="take-quiz-fixed">
+        <button class="btn" onclick="window.location.href='index.php';">Take a New Quiz</button>
     </div>
 
     <script src="assets/js/dashboard.js"></script>
