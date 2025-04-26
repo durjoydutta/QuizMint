@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
    * Handle signup form submission
    */
   async function handleSignup() {
+    const uuid = crypto.randomUUID();
     const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -115,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          id: uuid,
           username: username,
           email: email,
           password: password,
