@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to index page (quiz) after a short delay instead of dashboard
         setTimeout(() => {
           window.location.href = "index.php";
-        }, 1000);
+        }, 500);
       }
     } catch (error) {
       showMessage("An error occurred. Please try again.", "error");
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to quiz page after a short delay
         setTimeout(() => {
           window.location.href = "index.php";
-        }, 1500);
+        }, 1000);
       }
     } catch (error) {
       showMessage("An error occurred. Please try again.", "error");
