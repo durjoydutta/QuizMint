@@ -1,6 +1,8 @@
 <?php
 // Include auth middleware
 require_once 'middleware/auth_middleware.php';
+// Include CORS middleware for API requests
+require_once 'middleware/cors_middleware.php';
 
 // Require authentication for this page
 requireAuth();

@@ -1,5 +1,7 @@
 <?php
 session_start();
+// Include CORS middleware
+require_once '../middleware/cors_middleware.php';
 header('Content-Type: application/json');
 require_once '../db/db.php';
 
