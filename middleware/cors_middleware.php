@@ -21,9 +21,6 @@ function addCorsHeaders()
 
     // Cache preflight requests for 24 hours
     header('Access-Control-Max-Age: 86400');
-
-    // Set content type for API responses
-    header('Content-Type: application/json');
 }
 
 /**
