@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to index page (quiz) after a short delay instead of dashboard
         setTimeout(() => {
           window.location.href = "index.php";
-        }, 1000);
+        }, 500);
       }
     } catch (error) {
       showMessage("An error occurred. Please try again.", "error");
@@ -79,6 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Handle signup form submission
    */
   async function handleSignup() {
+    const uuid = typeof crypto.randomUUID === "function" 
+      ? crypto.randomUUID() 
+      : generateFallbackUUID();
     const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -115,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          id: uuid,
           username: username,
           email: email,
           password: password,
@@ -135,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to quiz page after a short delay
         setTimeout(() => {
           window.location.href = "index.php";
-        }, 1500);
+        }, 1000);
       }
     } catch (error) {
       showMessage("An error occurred. Please try again.", "error");

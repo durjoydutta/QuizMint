@@ -65,15 +65,16 @@ class AuthHandler
             $requestBody = file_get_contents('php://input');
             $data = json_decode($requestBody, true);
 
-            if (!$data || !isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
+            if (!$data || !isset($data['id']) || !isset($data['username']) || !isset($data['email']) || !isset($data['password'])) {
                 $this->respondWithError('Missing required fields');
                 return;
             }
 
+            $userId = $data['id'];
             $username = trim($data['username']);
             $email = trim($data['email']);
             $password = $data['password'];
-
+            
             // Validate inputs
             if (empty($username) || strlen($username) < 3) {
                 $this->respondWithError('Username must be at least 3 characters');
@@ -91,13 +92,13 @@ class AuthHandler
             }
 
             // Check if username or email already exists
-            $stmt = $this->conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-            $stmt->bind_param("ss", $username, $email);
+            $stmt = $this->conn->prepare("SELECT id FROM users WHERE id = ? OR username = ? OR email = ?");
+            $stmt->bind_param("sss", $userId, $username, $email);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                $this->respondWithError('Username or email already exists');
+                $this->respondWithError('User already exists');
                 return;
             }
 
@@ -105,12 +106,12 @@ class AuthHandler
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             // Insert the new user
-            $stmt = $this->conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $email, $hashedPassword);
+            $stmt = $this->conn->prepare("INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $userId, $username, $email, $hashedPassword);
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
-                $userId = $stmt->insert_id;
+                // $userId = $stmt->insert_id;
 
                 // Log the user in
                 $_SESSION['user_id'] = $userId;
