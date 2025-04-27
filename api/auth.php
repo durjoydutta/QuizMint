@@ -74,7 +74,7 @@ class AuthHandler
             $username = trim($data['username']);
             $email = trim($data['email']);
             $password = $data['password'];
-            
+
             // Validate inputs
             if (empty($username) || strlen($username) < 3) {
                 $this->respondWithError('Username must be at least 3 characters');
@@ -92,17 +92,16 @@ class AuthHandler
             }
 
             // Check if username or email already exists
-            $stmt = $this->conn->prepare("SELECT id FROM users WHERE id = ? OR username = ? OR email = ?");
-            $stmt->bind_param("sss", $userId, $username, $email);
+            $stmt = $this->conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            $stmt->bind_param("ss", $username, $email);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
-                $this->respondWithError('User already exists');
+                $this->respondWithError('Username or email already exists');
                 return;
             }
 
-            // Hash the password
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
             // Insert the new user
@@ -170,7 +169,7 @@ class AuthHandler
 
             // Update last login time
             $stmt = $this->conn->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-            $stmt->bind_param("i", $user['id']);
+            $stmt->bind_param("s", $user['id']);
             $stmt->execute();
 
             // Set session
@@ -225,7 +224,7 @@ class AuthHandler
 
                 // Check if the new username is already taken by another user
                 $stmt = $this->conn->prepare("SELECT id FROM users WHERE username = ? AND id != ?");
-                $stmt->bind_param("si", $displayName, $userId);
+                $stmt->bind_param("ss", $displayName, $userId);
                 $stmt->execute();
                 $result = $stmt->get_result();
 
@@ -238,7 +237,7 @@ class AuthHandler
             // Start with an update for the username if provided
             if ($displayName) {
                 $stmt = $this->conn->prepare("UPDATE users SET username = ? WHERE id = ?");
-                $stmt->bind_param("si", $displayName, $userId);
+                $stmt->bind_param("ss", $displayName, $userId);
                 $stmt->execute();
 
                 // Update session data
@@ -249,7 +248,7 @@ class AuthHandler
             if ($newPassword) {
                 // Verify current password first
                 $stmt = $this->conn->prepare("SELECT password FROM users WHERE id = ?");
-                $stmt->bind_param("i", $userId);
+                $stmt->bind_param("s", $userId);
                 $stmt->execute();
                 $result = $stmt->get_result();
 
@@ -275,18 +274,18 @@ class AuthHandler
                 // Hash and update the new password
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                $stmt->bind_param("si", $hashedPassword, $userId);
+                $stmt->bind_param("ss", $hashedPassword, $userId);
                 $stmt->execute();
             }
 
             // Update the record update timestamp
             $stmt = $this->conn->prepare("UPDATE users SET updated_at = NOW() WHERE id = ?");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
 
             // Get updated user info
             $stmt = $this->conn->prepare("SELECT id, username, email, created_at, last_login FROM users WHERE id = ?");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
             $updatedUser = $result->fetch_assoc();
@@ -344,7 +343,7 @@ class AuthHandler
 
         try {
             $stmt = $this->conn->prepare("SELECT id, username, email, created_at, last_login FROM users WHERE id = ?");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
 
@@ -388,7 +387,7 @@ class AuthHandler
                 FROM quiz_results
                 WHERE user_id = ?
             ");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $overallStats = $stmt->get_result()->fetch_assoc();
 
@@ -406,7 +405,7 @@ class AuthHandler
                 GROUP BY category
                 ORDER BY average_percentage DESC
             ");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $categoryStats = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -422,7 +421,7 @@ class AuthHandler
                 GROUP BY difficulty
                 ORDER BY difficulty
             ");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $difficultyStats = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -440,7 +439,7 @@ class AuthHandler
                 ORDER BY date_taken DESC
                 LIMIT 5
             ");
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("s", $userId);
             $stmt->execute();
             $recentQuizzes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
