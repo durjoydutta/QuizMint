@@ -21,7 +21,7 @@ $userInitial = strtoupper(substr($username, 0, 1));
     <link
         rel="icon"
         type="image/svg+xml"
-        href="/quizmint/assets/img/logo.svg" />
+        href="assets/img/logo.svg" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/modern-ui.css" />
     <!-- Add Inter font from Google Fonts -->

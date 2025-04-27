@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadUserData() {
     try {
       const userInfoResponse = await fetch(
-        "/quizmint/api/auth.php?action=get_user_info"
+        "api/auth.php?action=get_user_info"
       );
       const userInfoData = await userInfoResponse.json();
 
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Add timestamp to prevent caching
       const timestamp = new Date().getTime();
       const response = await fetch(
-        `/quizmint/api/auth.php?action=get_user_stats&t=${timestamp}`
+        `api/auth.php?action=get_user_stats&t=${timestamp}`
       );
       const data = await response.json();
 
@@ -421,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Add timestamp to prevent caching
       const timestamp = new Date().getTime();
       const response = await fetch(
-        `/quizmint/api/auth.php?action=get_leaderboard&t=${timestamp}`
+        `api/auth.php?action=get_leaderboard&t=${timestamp}`
       );
       const data = await response.json();
 
@@ -517,7 +517,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       // Note: This endpoint doesn't exist yet - we'll need to create it
       const response = await fetch(
-        "/quizmint/api/auth.php?action=update_user",
+        "api/auth.php?action=update_user",
         {
           method: "POST",
           headers: {
@@ -592,7 +592,7 @@ document.addEventListener("DOMContentLoaded", () => {
    */
   async function handleLogout() {
     try {
-      await fetch("/quizmint/api/auth.php?action=logout");
+      await fetch("api/auth.php?action=logout");
       window.location.href = "login.php";
     } catch (error) {
       console.error("Logout failed:", error);

@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Disable button during request
       loginButton.disabled = true;
 
-      const response = await fetch("/quizmint/api/auth.php?action=login", {
+      const response = await fetch("api/auth.php?action=login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Disable button during request
       signupButton.disabled = true;
 
-      const response = await fetch("/quizmint/api/auth.php?action=register", {
+      const response = await fetch("api/auth.php?action=register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

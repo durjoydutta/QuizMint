@@ -25,7 +25,7 @@ function isAuthenticated()
  * Redirects to login page if user is not authenticated
  * @param string $redirectTo Path to redirect to if not authenticated
  */
-function requireAuth($redirectTo = '/quizmint/login.php')
+function requireAuth($redirectTo = 'login.php')
 {
     if (!isAuthenticated()) {
         header("Location: $redirectTo");
@@ -38,7 +38,7 @@ function requireAuth($redirectTo = '/quizmint/login.php')
  * Used for login/signup pages - redirects to dashboard if already logged in
  * @param string $redirectTo Path to redirect to if authenticated
  */
-function redirectIfAuthenticated($redirectTo = '/quizmint/dashboard.php')
+function redirectIfAuthenticated($redirectTo = 'dashboard.php')
 {
     if (isAuthenticated()) {
         header("Location: $redirectTo");
