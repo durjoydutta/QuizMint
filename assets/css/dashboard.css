@@ -570,12 +570,17 @@
 
   .sidebar {
     width: 100%;
-    order: 2;
+    order: 1; /* Change from 2 to 1 to show sidebar at the top */
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   .main-content {
-    order: 1;
-    padding: 20px;
+    order: 2; /* Change from 1 to 2 */
+    padding: 10px;
+    margin-bottom: 10px; /* Add space at the bottom for fixed button */
   }
 
   .stats-summary {
@@ -589,11 +594,25 @@
   .dashboard-nav ul {
     display: flex;
     overflow-x: auto;
+    padding: 5px 0;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: thin;
+  }
+
+  .dashboard-nav ul::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .dashboard-nav ul::-webkit-scrollbar-thumb {
+    background-color: rgba(67, 97, 238, 0.3);
+    border-radius: 4px;
   }
 
   .dashboard-nav li {
-    padding: 12px 20px;
+    padding: 10px 15px;
     white-space: nowrap;
+    flex-shrink: 0;
+    border-radius: 20px;
   }
 
   .start-quiz {
@@ -611,14 +630,68 @@
   .chart-container {
     height: 250px;
   }
+
+  /* History layout fix for small screens */
+  .history-header,
+  .history-item {
+    grid-template-columns: 1fr 1fr;
+    row-gap: 8px;
+  }
+
+  .history-header span:nth-child(3),
+  .history-header span:nth-child(4),
+  .history-item span:nth-child(3),
+  .history-item span:nth-child(4) {
+    grid-row: 2;
+  }
+}
+
+/* Even smaller screens adjustments */
+@media (max-width: 480px) {
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .category-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-header {
+    padding: 10px 15px;
+    flex-wrap: wrap;
+  }
+
+  .logo h1 {
+    font-size: 1.5em;
+  }
+
+  .user-menu {
+    gap: 10px;
+    margin-top: 5px;
+  }
+
+  /* Leaderboard layout fix */
+  .leaderboard-header,
+  .leaderboard-item {
+    grid-template-columns: 60px 1fr 1fr;
+    font-size: 0.9em;
+  }
 }
 
 /* Fixed Take Quiz Button */
 .take-quiz-fixed {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 20px;
+  right: 20px;
   z-index: 100;
+}
+
+/* Make button smaller on mobile */
+@media (max-width: 768px) {
+  .take-quiz-fixed .btn {
+    padding: 10px 15px;
+    font-size: 0.9em;
+  }
 }
 
 .take-quiz-fixed .btn {
