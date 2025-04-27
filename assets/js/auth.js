@@ -79,7 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
    * Handle signup form submission
    */
   async function handleSignup() {
-    const uuid = crypto.randomUUID();
+    const uuid = typeof crypto.randomUUID === "function" 
+      ? crypto.randomUUID() 
+      : generateFallbackUUID();
     const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
