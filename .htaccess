@@ -6,7 +6,7 @@ RewriteEngine On
 
 # Redirect direct requests to index.php to enforce authentication via code
 # We won't redirect when the request already comes from our authentication code
-RewriteCond %{REQUEST_URI} ^/quizmint/index\.php$
+RewriteCond %{REQUEST_URI} ^/index\.php$
 RewriteCond %{HTTP_REFERER} !dashboard\.php [NC]
 RewriteCond %{HTTP_REFERER} !login\.php [NC]
 RewriteCond %{HTTP_REFERER} !signup\.php [NC]

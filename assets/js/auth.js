@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Disable button during request
       loginButton.disabled = true;
 
-      const response = await fetch("/quizmint/api/auth.php?action=login", {
+      const response = await fetch("/api/auth.php?action=login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,9 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Handle signup form submission
    */
   async function handleSignup() {
-    const uuid = typeof crypto.randomUUID === "function" 
-      ? crypto.randomUUID() 
-      : generateFallbackUUID();
+    const uuid =
+      typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : generateFallbackUUID();
     const username = usernameInput.value.trim();
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -112,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Disable button during request
       signupButton.disabled = true;
 
-      const response = await fetch("/quizmint/api/auth.php?action=register", {
+      const response = await fetch("/api/auth.php?action=register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

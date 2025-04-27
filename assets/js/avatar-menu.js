@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (logoutButton) {
     logoutButton.addEventListener("click", async function () {
       try {
-        await fetch("/quizmint/api/auth.php?action=logout");
+        await fetch("/api/auth.php?action=logout");
         window.location.href = "login.php";
       } catch (error) {
         console.error("Logout failed:", error);
