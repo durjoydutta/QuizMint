@@ -1,7 +1,5 @@
 <?php
 session_start();
-// Include CORS middleware
-// require_once '../middleware/cors_middleware.php';
 header('Content-Type: application/json');
 require_once '../db/db.php';
 
@@ -110,8 +108,6 @@ class AuthHandler
             $stmt->execute();
 
             if ($stmt->affected_rows > 0) {
-                // $userId = $stmt->insert_id;
-
                 // Log the user in
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['username'] = $username;

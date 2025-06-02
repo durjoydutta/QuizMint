@@ -1,13 +1,13 @@
 <?php
-// Include auth middleware
+// include auth middleware
 require_once 'middleware/auth_middleware.php';
-// Include CORS middleware for API requests
+// include cors middleware for api requests
 require_once 'middleware/cors_middleware.php';
 
-// Require authentication for this page
+// require authentication for this page
 requireAuth();
 
-// Now we know the user is authenticated, get user data
+// get user data
 $username = htmlspecialchars($_SESSION['username']);
 $userInitial = strtoupper(substr($username, 0, 1));
 ?>
@@ -24,7 +24,6 @@ $userInitial = strtoupper(substr($username, 0, 1));
         href="assets/img/logo.svg" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/modern-ui.css" />
-    <!-- Add Inter font from Google Fonts -->
     <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />

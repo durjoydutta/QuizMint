@@ -1,13 +1,11 @@
 <?php
-// Include auth middleware
+// include auth middleware
 require_once 'middleware/auth_middleware.php';
-// Include CORS middleware for API requests
+// include cors middleware for api requests
 require_once 'middleware/cors_middleware.php';
 
-// Require authentication for this page
+// require authentication for this page
 requireAuth();
-
-// If we get here, the user is authenticated, so we can render the dashboard
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +20,6 @@ requireAuth();
     <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <!-- Add Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 

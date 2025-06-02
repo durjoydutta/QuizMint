@@ -1,8 +1,8 @@
 <?php
-// Include auth middleware
+// include auth middleware
 require_once 'middleware/auth_middleware.php';
 
-// If user is already authenticated, redirect to index.php (quiz interface)
+// if user is already authenticated, redirect to index.php (quiz interface)
 if (isAuthenticated()) {
     header('Location: index.php');
     exit;
@@ -18,7 +18,6 @@ if (isAuthenticated()) {
     <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg" />
     <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/landing.css" />
-    <!-- Add Inter font from Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
 </head>
 
