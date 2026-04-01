@@ -4,7 +4,9 @@
 
 ## 📚 Overview
 
-QuizMint is a modern, interactive quiz application built with PHP, JavaScript, and XML. It offers a rich, engaging quiz experience across multiple knowledge categories with a sleek, responsive user interface.
+QuizMint is a dynamic and user-friendly quiz platform designed to deliver an engaging learning experience. Built using PHP, JavaScript, and XML, it combines a responsive interface with structured data handling to support multiple quiz categories and difficulty levels.
+
+Whether you're testing knowledge or building one, QuizMint provides a smooth and interactive environment for both.
 
 ### Features
 
